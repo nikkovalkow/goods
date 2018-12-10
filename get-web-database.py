@@ -25,7 +25,7 @@ def GetPageText(url):
     
         
     
-print (GetPageText('https://by.ebay.com/b/Cell-Phones-Smartphones/9355/bn_320094')[0])
-
+test=GetPageText('https://www.21vek.by/mobile/')[0]
+print('end')
 
 
