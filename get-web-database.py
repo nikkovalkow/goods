@@ -1,5 +1,6 @@
 from urllib.request import Request, urlopen
 import urllib.error
+import lxml.html as html
 
 def GetPageText(url):
 
@@ -18,17 +19,45 @@ def GetPageText(url):
     
     
     data = response.read()
-    info=response.info()
+    
     
     return data
     
+
     
         
-#def RealtGetRentList():
+def AnalyzeRealtPage(PageURL):
+    #get list of links to flat advert on realt.by
     
+    page=GetPageText(PageURL)
+    AdList=[]
     
-test=GetPageText('https://realt.by/rent/flat-for-long/?search=all')
-test=GetPageText('https://realt.by/rent/flat-for-long/?search=all&page=78')
-print(test)
+    if len(page)<4 :
+        return False
+
+    #extracting links
+    page=html.document_fromstring(page)
+    page=page.find_class("bd-table")
+    if len(page)!=0:
+            
+        page=page[0].find_class('ad')
+        for i in page:
+            AdList.append(i.find('a').get("href"))
+    else:
+        return False
+    return True
+     
+
+    
+i=69
+result=True
+
+while result!=False:
+    result=AnalyzeRealtPage('https://realt.by/rent/flat-for-long/?search=all&page='+str(i))
+    print(i,result)
+       
+    i=i+1
+       
+
 
 
