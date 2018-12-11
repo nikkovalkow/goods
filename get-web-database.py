@@ -23,7 +23,27 @@ def GetPageText(url):
     
     return data
     
+def GetRealtAdInfo(AdURL):
+    #Gets info about flat to dict
 
+    page=GetPageText(AdURL)
+    if len(page)<4 :
+        return False
+
+    #extracting table and put to Dict
+    
+    page=html.document_fromstring(page)
+    LeftRow=page.find_class("table-row-left")
+    RightRow=page.find_class("table-row-right")
+    LeftRow=[i.text_content() for i in LeftRow]
+    RightRow=[i.text_content() for i in RightRow]
+    Data=dict(zip(LeftRow,RightRow))
+              
+    del Data['']
+    print(Data)
+def ClearRealtAdData(Data):
+    
+    
     
         
 def AnalyzeRealtPage(PageURL):
@@ -48,7 +68,7 @@ def AnalyzeRealtPage(PageURL):
     return True
      
 
-    
+'''    
 i=69
 result=True
 
@@ -57,7 +77,9 @@ while result!=False:
     print(i,result)
        
     i=i+1
-       
+'''
+
+GetRealtAdInfo('https://realt.by/rent/flat-for-long/object/1136747/')
 
 
 
