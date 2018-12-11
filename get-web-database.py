@@ -39,9 +39,26 @@ def GetRealtAdInfo(AdURL):
     RightRow=[i.text_content() for i in RightRow]
     Data=dict(zip(LeftRow,RightRow))
               
-    del Data['']
-    print(Data)
+      
+    return ClearRealtAdData(Data)
+
 def ClearRealtAdData(Data):
+
+    try:
+        del Data['']
+    except:
+        print("Clean error")
+    if 'Ориентировочная стоимость эквивалентна' in Data:
+       Data['Ориентировочная стоимость эквивалентна']=Data['Ориентировочная стоимость эквивалентна'].replace(u'\xa0','')
+       Data['Ориентировочная стоимость эквивалентна']=Data['Ориентировочная стоимость эквивалентна'][:Data['Ориентировочная стоимость эквивалентна'].find('р')]
+    if 'Телефоны' in Data:
+        Data['Телефоны']=Data['Телефоны'][Data['Телефоны'].find('+'):]
+    if 'E-mail' in Data:
+        Data['E-mail']=Data['E-mail'].replace('(собачка)','@')
+    if 'Площадь общая/жилая/кухня' in Data:   
+        Data['Площадь общая/жилая/кухня']=Data['Площадь общая/жилая/кухня'].split('/')[0]
+    
+    return Data
     
     
     
@@ -62,7 +79,8 @@ def AnalyzeRealtPage(PageURL):
             
         page=page[0].find_class('ad')
         for i in page:
-            AdList.append(i.find('a').get("href"))
+            print(i.find('a').get("href"))
+            print(GetRealtAdInfo(i.find('a').get("href")))
     else:
         return False
     return True
@@ -79,7 +97,9 @@ while result!=False:
     i=i+1
 '''
 
-GetRealtAdInfo('https://realt.by/rent/flat-for-long/object/1136747/')
+#print(GetRealtAdInfo('https://realt.by/rent/flat-for-long/object/1136747/'))
+
+AnalyzeRealtPage('https://realt.by/rent/flat-for-long/?search=all&page=1')
 
 
 
