@@ -43,7 +43,7 @@ def GetRealtAdInfo(AdURL):
     return ClearRealtAdData(Data)
 
 def ClearRealtAdData(Data):
-
+#delete unnecessary data from dict
     try:
         del Data['']
     except:
@@ -99,7 +99,7 @@ while result!=False:
 
 #print(GetRealtAdInfo('https://realt.by/rent/flat-for-long/object/1136747/'))
 
-AnalyzeRealtPage('https://realt.by/rent/flat-for-long/?search=all&page=1')
+AnalyzeRealtPage('https://realt.by/rent/flat-for-long/?search=all&page=70')
 
 
 
