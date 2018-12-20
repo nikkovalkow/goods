@@ -1,6 +1,8 @@
+import datetime
 from urllib.request import Request, urlopen
 import urllib.error
 import lxml.html as html
+from data_store import * 
 
 def GetPageText(url):
 
@@ -35,10 +37,10 @@ def GetRealtAdInfo(AdURL):
     page=html.document_fromstring(page)
     LeftRow=page.find_class("table-row-left")
     RightRow=page.find_class("table-row-right")
-    LeftRow=[i.text_content() for i in LeftRow]
+    LeftRow=[i.text_content().replace(".","") for i in LeftRow]
     RightRow=[i.text_content() for i in RightRow]
     Data=dict(zip(LeftRow,RightRow))
-              
+    Data["URL"]=AdURL          
       
     return ClearRealtAdData(Data)
 
@@ -71,8 +73,8 @@ def AnalyzeRealtPage(PageURL):
     
     if len(page)<4 :
         return False
-
-    #extracting links
+    Collection=DBOpen()
+    #extracting links, addding to DB
     page=html.document_fromstring(page)
     page=page.find_class("bd-table")
     if len(page)!=0:
@@ -80,7 +82,10 @@ def AnalyzeRealtPage(PageURL):
         page=page[0].find_class('ad')
         for i in page:
             print(i.find('a').get("href"))
-            print(GetRealtAdInfo(i.find('a').get("href")))
+            ad_info=GetRealtAdInfo(i.find('a').get("href"))
+            DBAdd(Collection,ad_info)
+
+            
     else:
         return False
     return True
@@ -99,7 +104,8 @@ while result!=False:
 
 #print(GetRealtAdInfo('https://realt.by/rent/flat-for-long/object/1136747/'))
 
-AnalyzeRealtPage('https://realt.by/rent/flat-for-long/?search=all&page=70')
+#AnalyzeRealtPage('https://realt.by/rent/flat-for-long/?search=all&page=20')
+
 
 
 
