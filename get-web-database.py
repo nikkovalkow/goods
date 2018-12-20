@@ -59,6 +59,12 @@ def ClearRealtAdData(Data):
         Data['E-mail']=Data['E-mail'].replace('(собачка)','@')
     if 'Площадь общая/жилая/кухня' in Data:   
         Data['Площадь общая/жилая/кухня']=Data['Площадь общая/жилая/кухня'].split('/')[0]
+
+    if 'Дата обновления' in Data:
+        try:
+            Data['Дата обновления']=datetime.datetime.strptime(Data['Дата обновления'],'%Y-%m-%d')
+        except:
+            return Data
     
     return Data
     
@@ -104,7 +110,7 @@ while result!=False:
 
 #print(GetRealtAdInfo('https://realt.by/rent/flat-for-long/object/1136747/'))
 
-#AnalyzeRealtPage('https://realt.by/rent/flat-for-long/?search=all&page=20')
+AnalyzeRealtPage('https://realt.by/rent/flat-for-long/?search=all&page=20')
 
 
 
