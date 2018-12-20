@@ -87,9 +87,13 @@ def AnalyzeRealtPage(PageURL):
             
         page=page[0].find_class('ad')
         for i in page:
-            print(i.find('a').get("href"))
+            
             ad_info=GetRealtAdInfo(i.find('a').get("href"))
-            DBAdd(Collection,ad_info)
+            if CheckDBAdverChange(Collection,ad_info)==0:
+                print ("ADD",i.find('a').get("href"))
+                DBAdd(Collection,ad_info)
+            else:
+                print("Exist")
 
             
     else:
@@ -97,20 +101,19 @@ def AnalyzeRealtPage(PageURL):
     return True
      
 
-'''    
-i=69
-result=True
 
+result=True
+i=0
 while result!=False:
     result=AnalyzeRealtPage('https://realt.by/rent/flat-for-long/?search=all&page='+str(i))
-    print(i,result)
-       
-    i=i+1
-'''
+    print("Page ",i)
+    i=i+1   
+    
+
 
 #print(GetRealtAdInfo('https://realt.by/rent/flat-for-long/object/1136747/'))
 
-AnalyzeRealtPage('https://realt.by/rent/flat-for-long/?search=all&page=20')
+#AnalyzeRealtPage('https://realt.by/rent/flat-for-long/?search=all&page=20')
 
 
 
