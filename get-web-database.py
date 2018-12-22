@@ -2,32 +2,62 @@ import datetime
 from urllib.request import Request, urlopen
 import urllib.error
 import lxml.html as html
-from data_store import * 
+from data_store import *
+from random import randint
+import time
+
+
+NewAdvertize=0
+ChangedAdvertize=0
+NotChangedAdvertize=0
+def SpecialDelay():
+    rnd=randint(0,100)
+    if rnd<5:
+        time.sleep(randint(0,5))
+        
+        
+    elif rnd<50:
+        time.sleep(randint(0,2))
+        
+        
+    elif rnd<80:
+        time.sleep(randint(0,1))
+        
+    else:
+        
+        
+        
 
 def ExceptionMessage(command):
-    print(command)
+    DBPutLogMessage(command)
+    
     
 def GetPageText(url):
 
 # Gets URL as text, return URL contenet as text,
 # in case of HTML error returns Error code
 # in case of non-HTML error retuens None
-
+    ErrorCount=0
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    
-    try:
-        response=urlopen(req)
-    except urllib.error.HTTPError as e:  
-        ExceptionMessage("HTTP ERROR: "+str(e.code)+" "+url) 
-        return e.code
-    except:
+    for i in range (0,3):
+        
+        try:
+            response=urlopen(req)
+        except urllib.error.HTTPError as e:  
+            ExceptionMessage("HTTP ERROR: "+str(e.code)+" "+url)
+            time.sleep(5)
+            ErrorCount=ErroprCount+1
+            pass
+        except:
+            ExceptionMessage("HTTP ERROR: NO TYPE")
+            time.sleep(5)
+            ErrorCount=ErroprCount+1
+            pass
+    if ErrorCount==3:
         return None
-    
-    
-    data = response.read()
-    
-    
-    return data
+    else:
+        data = response.read()
+        return data
     
 def GetRealtAdInfo(AdURL):
     #Gets info about flat to dict
@@ -50,7 +80,7 @@ def GetRealtAdInfo(AdURL):
     return ClearRealtAdData(Data)
 
 def ClearRealtAdData(Data):
-#delete unnecessary data from dict
+#delete unnecessary data from dict/ format the data
     try:
         del Data['']
     except:
@@ -62,7 +92,7 @@ def ClearRealtAdData(Data):
             Data['Ориентировочная стоимость эквивалентна']=Data['Ориентировочная стоимость эквивалентна'][:Data['Ориентировочная стоимость эквивалентна'].find('р')]
             Data['Ориентировочная стоимость эквивалентна']=int(Data['Ориентировочная стоимость эквивалентна'])
         except:
-            ExceptionMessage("ClearRealtAdData() STO ERROR: ")
+            ExceptionMessage("ClearRealtAdData() ERROR: 1")
             ExceptionMessage(Data['Ориентировочная стоимость эквивалентна'])
             pass
             
@@ -71,21 +101,21 @@ def ClearRealtAdData(Data):
         try:
             Data['Телефоны']=Data['Телефоны'][Data['Телефоны'].find('+'):]
         except:
-            ExceptionMessage("ClearRealtAdData() ERROR: ")
+            ExceptionMessage("ClearRealtAdData() ERROR: 2 ")
             ExceptionMessage(Data)
             pass
     if 'E-mail' in Data:
         try:
             Data['E-mail']=Data['E-mail'].replace('(собачка)','@')
         except:
-            ExceptionMessage("ClearRealtAdData() ERROR: ")
+            ExceptionMessage("ClearRealtAdData() ERROR: 3 ")
             ExceptionMessage(Data)
             pass
     if 'Площадь общая/жилая/кухня' in Data:
         try: 
             Data['Площадь общая/жилая/кухня']=Data['Площадь общая/жилая/кухня'].split('/')[0]
         except:
-            ExceptionMessage("ClearRealtAdData() ERROR: ")
+            ExceptionMessage("ClearRealtAdData() ERROR: 4 ")
             ExceptionMessage(Data)
             pass
 
@@ -93,7 +123,7 @@ def ClearRealtAdData(Data):
         try:
             Data['Дата обновления']=datetime.datetime.strptime(Data['Дата обновления'],'%Y-%m-%d')
         except:
-            ExceptionMessage("ClearRealtAdData() ERROR: ")
+            ExceptionMessage("ClearRealtAdData() ERROR: 5 ")
             ExceptionMessage(Data)
             pass
      
@@ -103,53 +133,80 @@ def ClearRealtAdData(Data):
     
     
         
-def AnalyzeRealtPage(PageURL):
+def AnalyzeRealtPage(PageURL,TimeStamp):
     #get list of links to flat advert on realt.by
     
+
     page=GetPageText(PageURL)
+
+    global NewAdvertize
+    global ChangedAdvertize
+    global NotChangedAdvertize
     
     
-    if len(page)<4 :
-        return False
+    try:
+        if len(page)<4 :
+            ExceptionMessage("ERROR PAGE LEN<4: "+str(page))
+            return False
+    except:
+            ExceptionMessage("ERROR PAGE LEN<4: "+str(page))
+            return False
     
     Collection=DBOpen()
+
     #extracting links, addding to DB
     page=html.document_fromstring(page)
     page=page.find_class("bd-table")
-    if len(page)!=0:
             
-        page=page[0].find_class('ad')
+    page=page[0].find_class('ad')
     
-        for i in page:
+    for i in page:
             
-            ad_info=GetRealtAdInfo(i.find('a').get("href"))
 
-            if CheckDBAdverChange(Collection,ad_info)==0:
-                print ("ADD",i.find('a').get("href"))
+
+        SpecialDelay()
+
+        
+        ad_info=GetRealtAdInfo(i.find('a').get("href"))
+
+
+        if CheckDBAdverChange(Collection,ad_info)==0:                #if exact the same NOT exists
+
+            if CheckDBAdverChange(Collection, {'URL':ad_info['URL']})==0: # if with the same URL NOT exists
+                NewAdvertize=NewAdvertize+1
+                ad_info['timestamp']=TimeStamp
+                DBAdd(Collection,ad_info)              
+            else:                                                                   # if with the same URL exists
+                ChangedAdvertize=ChangedAdvertize+1
+                ad_info['timestamp']=TimeStamp
                 DBAdd(Collection,ad_info)
-            else:
-                print("Exist")
+                    
+        else:
+            NotChangedAdvertize=NotChangedAdvertize+1               #if exact the same exists
+            DBChangeSetAdverTimeStamp(Collection,ad_info,TimeStamp)
 
-            
-    else:
-        return False
+    
+        
     return True
      
 
 
 result=True
 i=0
+
+ExceptionMessage("Start scan")
+
 while result!=False:
-    result=AnalyzeRealtPage('http://realt.by/rent/flat-for-long/?search=all&page='+str(i))
+    result=AnalyzeRealtPage('http://realt.by/rent/flat-for-long/?search=all&page='+str(i),datetime.datetime.now())
     print("Page ",i)
-    i=i+1   
+    i=i+1
+
+ExceptionMessage("Scan complete - New: "+ str(NewAdvertize)+" Changed: "+str(ChangedAdvertize)+ " Unchanged: "+str(NotChangedAdvertize))
+
+
+
   
 
-
-#print(GetRealtAdInfo('https://realt.by/rent/flat-for-long/object/1136747/'))
-
-#AnalyzeRealtPage('https://realt.by/rent/flat-for-long/?search=all&page=20')
-#print(GetPageText("http://learnin.ru"))
 
 
 
