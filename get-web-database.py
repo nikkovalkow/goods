@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import datetime
 from urllib.request import Request, urlopen
 import urllib.error
@@ -10,6 +11,7 @@ import time
 NewAdvertize=0
 ChangedAdvertize=0
 NotChangedAdvertize=0
+
 def SpecialDelay():
     rnd=randint(0,100)
     if rnd<5:
@@ -24,7 +26,7 @@ def SpecialDelay():
         time.sleep(randint(0,1))
         
     else:
-        
+        return         
         
         
 
@@ -92,6 +94,7 @@ def ClearRealtAdData(Data):
             Data['Ориентировочная стоимость эквивалентна']=Data['Ориентировочная стоимость эквивалентна'][:Data['Ориентировочная стоимость эквивалентна'].find('р')]
             Data['Ориентировочная стоимость эквивалентна']=int(Data['Ориентировочная стоимость эквивалентна'])
         except:
+            Data['Ориентировочная стоимость эквивалентна']=0
             ExceptionMessage("ClearRealtAdData() ERROR: 1")
             ExceptionMessage(Data['Ориентировочная стоимость эквивалентна'])
             pass
@@ -113,7 +116,7 @@ def ClearRealtAdData(Data):
             pass
     if 'Площадь общая/жилая/кухня' in Data:
         try: 
-            Data['Площадь общая/жилая/кухня']=Data['Площадь общая/жилая/кухня'].split('/')[0]
+            Data['Площадь общая/жилая/кухня']=int(float(Data['Площадь общая/жилая/кухня'].split('/')[0]))
         except:
             ExceptionMessage("ClearRealtAdData() ERROR: 4 ")
             ExceptionMessage(Data)
