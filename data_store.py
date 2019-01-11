@@ -7,6 +7,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as sp
+from scipy import stats
 
 
     
@@ -53,7 +54,7 @@ print (x)
 '''
 
 col=DBOpen()
-cursor=col.find({"Населенный пункт":"Минск","Район города":{"$regex" :".*Первомайский.*"}},{"Ориентировочная стоимость эквивалентна":1,'Площадь общая/жилая/кухня':1})
+cursor=col.find({"Населенный пункт":"Минск","Адрес":{"$regex" :".*.*"}} ,{"Ориентировочная стоимость эквивалентна":1,'Площадь общая/жилая/кухня':1})
 '''
 for i in cursor:
     r=col.find({"_id":i.get("_id")},{"Ориентировочная стоимость эквивалентна":1})
@@ -97,19 +98,27 @@ astd=a.std()
 bstd=b.std()
 print ("Before ",len(a))
 
+'''
 k=0
+
 for i in b:
     if (i>(bm+bstd)) or i<(bm-3*bstd) or a[k]>(am+3*astd) or a[k]<(am-3*astd):
         a=np.delete(a,k)
         b=np.delete(b,k)
 print(np.corrcoef(a,b))
 print ("After ",len(a))
-        
+'''        
     
+p4 = np.poly1d(np.polyfit(a, b, 2))
+
+xp=np.linspace(20,500)
 
 plt.scatter(a,b)
-plt.show()
 
+plt.plot(xp, p4(xp), c='r')
+
+
+plt.show()
 
 
 
