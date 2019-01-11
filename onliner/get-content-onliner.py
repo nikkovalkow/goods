@@ -60,7 +60,7 @@ def GetKufarAdList(page_text):
     for i in AdList:
         print(i.text_content())
         print(i.get("href"))
-        print(GetPageText(i.get("href").encode('utf-8')))
+        print(GetPageText(quote(i.get("href"),safe="%/:=&?~#+!$,;'@()*[]")))
         
 
 page=GetPageText("https://www.kufar.by/"+quote('минск_город/Телефоны')+'?cu=BYR&phce=1&o=100')
