@@ -8,6 +8,7 @@ from urllib.parse   import quote
 
 from random import randint
 import time
+import pprint
 
 import demjson
 
@@ -67,14 +68,36 @@ def GetKufarAdList(page_text):
         text=text[text.find('function pulseTrackPhoneNumberDisplayed(event)'):text.find('function pulseTrackAdReplySubmitted')]
         text=text[text.find('object'):text.find(');')]
         
-        print(demjson.decode("{"+text))
-        if (x>2):
-            break
-        x=x+1  
+        
+        ADdict=demjson.decode("{"+text)
+        
+
+        del ADdict['origin']
+        del ADdict['name']
+        del ADdict['provider']
+        del ADdict['type']
+        del ADdict['deployStage']
+        del ADdict['deployTag']
+        ADdict['object']['inReplyTo']['cust_name']=ADdict['object']['name']
+        ADdict['object']['inReplyTo']['phone']=ADdict['object']['telephone']
+        ADdict=ADdict['object']['inReplyTo']
+        ADdict['Region']=ADdict['location']['addressRegion']
+        ADdict['Subarea']=ADdict['location']['addressSubarea']
+        del ADdict['location']
+        
+        
+        pprint.pprint(ADdict)
+        
+        
+        
+        
+
 page=GetPageText("https://www.kufar.by/"+quote('минск_город/Телефоны')+'?cu=BYR&phce=1&o=100')
+
+
 GetKufarAdList(page)
 
 
 
 
-#print(quote('минск_город/Телефоны?cu=BYR&phce=1&o=100'))
+
