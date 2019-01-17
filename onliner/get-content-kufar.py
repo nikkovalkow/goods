@@ -112,7 +112,7 @@ def GetKufarAdList(page_text):
             del ADdict['location']
             resultList.append(ADdict)
         except:
-            DBPutLogMessage("GetKufarADList() AD add failed link:" - i.get("href"))
+            DBPutLogMessage("GetKufarADList() AD add failed link:" + i.get("href"))
             
             
     return resultList    
