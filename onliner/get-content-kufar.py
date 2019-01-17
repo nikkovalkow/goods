@@ -135,22 +135,40 @@ def PutDictListToDB(adList,timestamp):
             else:
                 newvalues = { "$set": { "timestamp": timestamp } } # if exists with the same URL
                 mycol.update_many({'href':Ad['href']},newvalues)
-
+                print(Ad['href'])
                 Ad['timestamp']=timestamp
+                Ad['first_timestamp']=timestamp
                 DBPutObject(myclient,'kufar','data',Ad)
                 UpdatedADCount=UpdatedADCount+1
                 
         else:                                           #if exist
             ExistADCount=ExistADCount+1
+            newvalues = { "$set": { "dead_timestamp": timestamp } }
+            mycol.update_many(Ad,newvalues)
+            
             
     return [NewADCount,ExistADCount,UpdatedADCount]
             
-            
+def FindDead(timestamp):
+    myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+    mydb = myclient["kufar"]
+    mycol = mydb["data"]
+    mycol_dead=mydb['data_dead']
+    { "carrier.state": { '$ne': "NY" } }
+
+    newvalues = { "$set": { "dead_timestamp": timestamp } }
+    
+    mycol.update_many({ "timestamp": { '$ne':timestamp } },newvalues)
+    mycol_dead.insert_many(mycol.find({ "timestamp": { '$ne':timestamp } }))
+    mycol.delete_many({ "timestamp": { '$ne':timestamp } })
             
         
         
 
 timestamp=datetime.datetime.now()
+
+
+
 for pageNum in range (0,1):
     
     page=GetPageText("https://www.kufar.by/"+quote('минск_город/Телефоны')+'?cu=BYR&phce=1&o='+str(pageNum))
@@ -172,6 +190,7 @@ for pageNum in range (0,1):
        
         break
 
+FindDead(timestamp)
 
 
 
