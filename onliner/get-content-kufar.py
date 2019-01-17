@@ -12,6 +12,7 @@ import pprint
 
 import demjson
 import time
+import sys
 
 
 def DBPutLogMessage(message):
@@ -29,11 +30,11 @@ def DBPutObject(db_client,db_name, collection_name, dict_obj):
 
     try:
         myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-        mydb = myclient[sb_name]
+        mydb = myclient[db_name]
         mycol = mydb[collection_name]
         mycol.insert_one(dict_obj)
     except:
-        print("DBPutObject() DB open error" + str(datetime.datetime.now()))
+        print("DBPutObject() DB open error " + str(datetime.datetime.now()))
         
     
     
@@ -116,12 +117,41 @@ def GetKufarAdList(page_text):
             
     return resultList    
             
-        
+def PutDictListToDB(adList,timestamp):
+    myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+    mydb = myclient["kufar"]
+    mycol = mydb["data"]
+    NewADCount=0
+    ExistADCount=0
+    UpdatedADCount=0
+    for Ad in adList:
+        if mycol.count_documents(Ad)==0:                #if NOT exists EXACT the same
+
+            if mycol.count_documents({'href':Ad['href']})==0: #if not exists with the same URL
+                Ad['timestamp']=timestamp
+                Ad['first_timestamp']=timestamp
+                DBPutObject(myclient,'kufar','data',Ad)
+                NewADCount=NewADCount+1
+            else:
+                newvalues = { "$set": { "timestamp": timestamp } } # if exists with the same URL
+                mycol.update_many({'href':Ad['href']},newvalues)
+
+                Ad['timestamp']=timestamp
+                DBPutObject(myclient,'kufar','data',Ad)
+                UpdatedADCount=UpdatedADCount+1
+                
+        else:                                           #if exist
+            ExistADCount=ExistADCount+1
+            
+    return [NewADCount,ExistADCount,UpdatedADCount]
+            
+            
+            
         
         
 
-
-for pageNum in range (0,10000):
+timestamp=datetime.datetime.now()
+for pageNum in range (0,1):
     
     page=GetPageText("https://www.kufar.by/"+quote('минск_город/Телефоны')+'?cu=BYR&phce=1&o='+str(pageNum))
 
@@ -131,13 +161,15 @@ for pageNum in range (0,10000):
         resultList=GetKufarAdList(page)
 
         t2 = time.perf_counter()
-
+        
         print(t2-t1)
         print((t2-t1)/len(resultList))
+        print(PutDictListToDB(resultList,timestamp))
+        
         
     else:
         result={''}
-        DBPutObject
+       
         break
 
 
