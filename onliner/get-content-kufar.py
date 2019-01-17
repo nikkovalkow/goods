@@ -143,7 +143,7 @@ def PutDictListToDB(adList,timestamp):
                 
         else:                                           #if exist
             ExistADCount=ExistADCount+1
-            newvalues = { "$set": { "dead_timestamp": timestamp } }
+            newvalues = { "$set": { "timestamp": timestamp } }
             mycol.update_many(Ad,newvalues)
             
             
