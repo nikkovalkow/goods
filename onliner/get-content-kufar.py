@@ -172,7 +172,7 @@ timestamp=datetime.datetime.now()
 
 
 
-for pageNum in range (0,1):
+for pageNum in range (0,1000):
     
     page=GetPageText("https://www.kufar.by/"+quote('минск_город/Телефоны')+'?cu=BYR&phce=1&o='+str(pageNum))
 
