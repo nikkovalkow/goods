@@ -159,8 +159,11 @@ def FindDead(timestamp):
     newvalues = { "$set": { "dead_timestamp": timestamp } }
     
     mycol.update_many({ "timestamp": { '$ne':timestamp } },newvalues)
+    deadCount=mycol.count_documents({ "timestamp": { '$ne':timestamp } })
     mycol_dead.insert_many(mycol.find({ "timestamp": { '$ne':timestamp } }))
+    
     mycol.delete_many({ "timestamp": { '$ne':timestamp } })
+    return deadCount
             
         
         
@@ -190,7 +193,7 @@ for pageNum in range (0,1):
        
         break
 
-FindDead(timestamp)
+print(FindDead(timestamp))
 
 
 
