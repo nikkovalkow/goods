@@ -174,7 +174,7 @@ totalExist=0
 pageNum=0
 print("Start:  "+str(timestamp))
 DBPutLogMessage({'status':'start','timestamp':timestamp})
-for pageNum in range (0,2):
+for pageNum in range (0,1000):
     
     page=GetPageText("https://www.kufar.by/"+quote('минск_город/Телефоны')+'?cu=BYR&phce=1&o='+str(pageNum))
 
