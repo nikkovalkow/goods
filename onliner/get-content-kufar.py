@@ -135,7 +135,6 @@ def PutDictListToDB(adList,timestamp):
             else:
                 newvalues = { "$set": { "timestamp": timestamp } } # if exists with the same URL
                 mycol.update_many({'href':Ad['href']},newvalues)
-                print(Ad['href'])
                 Ad['timestamp']=timestamp
                 Ad['first_timestamp']=timestamp
                 DBPutObject(myclient,'kufar','data',Ad)
