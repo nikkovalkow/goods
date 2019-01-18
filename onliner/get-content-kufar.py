@@ -207,6 +207,10 @@ print("Dead: "+str(totalDead))
 DBPutLogMessage({'status':'end','timestamp':timestamp,'New':totalNew,'Exist':totalExist,'Edited':totalEdited,'Dead':totalDead})
 
 
+#db.data.createIndex({"description":"text","title":"text"})
+#db.data.find({$text: {$search: "iphone"}}, {score: {$meta: "textScore"}}).sort({score:{$meta:"textScore"}})
+
+
 
 
 
