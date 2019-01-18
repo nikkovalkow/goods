@@ -178,7 +178,7 @@ for pageNum in range (0,2):
     
     page=GetPageText("https://www.kufar.by/"+quote('минск_город/Телефоны')+'?cu=BYR&phce=1&o='+str(pageNum))
 
-    if page.find('Ничего не найдено')==-1:
+    if page.find('Ничего не найдено, поиск расширен')==-1:
         pageNum=pageNum+1
         t1 = time.perf_counter()
 
@@ -195,6 +195,7 @@ for pageNum in range (0,2):
         totalEdited=totalEdited+int(totalData[2])
         totalExist=totalExist+int(totalData[1])
         print("Page: ",pageNum," ",totalData)
+        DBPutLogMessage({'page':pageNum,'data':totalData})
         
         
     else:
