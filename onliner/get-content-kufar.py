@@ -170,7 +170,7 @@ def FindDead(timestamp):
 
 timestamp=datetime.datetime.now()
 
-
+print("Start:  "+str(timestamp))
 
 for pageNum in range (0,1000):
     
@@ -185,15 +185,16 @@ for pageNum in range (0,1000):
         
         print(t2-t1)
         print((t2-t1)/len(resultList))
-        print(PutDictListToDB(resultList,timestamp))
+        print(PutDictListToDB(resultList,timestamp),datetime.datetime.now())
         
         
     else:
-        result={''}
+        print("Finish: "+str(datetime.datetime.now()))
+        
        
         break
 
-print(FindDead(timestamp))
+print("Dead: "+str(FindDead(timestamp)))
 
 
 
