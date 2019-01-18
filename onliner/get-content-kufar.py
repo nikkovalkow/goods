@@ -168,10 +168,12 @@ def FindDead(timestamp):
         
 
 timestamp=datetime.datetime.now()
-
+totalNew=0
+totalEdited=0
+totalExist=0
 print("Start:  "+str(timestamp))
-
-for pageNum in range (0,1000):
+DBPutLogMessage({'status':'start','timestamp':timestamp})
+for pageNum in range (0,2):
     
     page=GetPageText("https://www.kufar.by/"+quote('минск_город/Телефоны')+'?cu=BYR&phce=1&o='+str(pageNum))
 
@@ -182,18 +184,27 @@ for pageNum in range (0,1000):
 
         t2 = time.perf_counter()
         
-        print(t2-t1)
-        print((t2-t1)/len(resultList))
-        print(PutDictListToDB(resultList,timestamp),datetime.datetime.now())
+        
+        
+        totalData=PutDictListToDB(resultList,timestamp)
+        print(t2-t1,'sec.  ',totalData,'  ',timestamp)
+       
+        totalNew=totalNew+int(totalData[0])
+        totalEdited=totalEdited+int(totalData[2])
+        totalExist=totalExist+int(totalData[1])
+        
         
         
     else:
         print("Finish: "+str(datetime.datetime.now()))
         
+        
        
         break
+totalDead=FindDead(timestamp)
+print("Dead: "+str(totalDead))
 
-print("Dead: "+str(FindDead(timestamp)))
+DBPutLogMessage({'status':'end','timestamp':timestamp,'New':totalNew,'Exist':totalExist,'Edited':totalEdited,'Dead':totalDead})
 
 
 
