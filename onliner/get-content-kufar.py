@@ -17,6 +17,9 @@ def GetKufarAdList(page_text):
         try:         
             #extracting JajaScriptObject from page
             text=GetPageText(quote(i.get("href"),safe="%/:=&?~#+!$,;'@()*[]"))
+            releaseDate=text[text.find('releaseDate'):text.find('releaseDate')+50]
+            releaseDate=releaseDate[releaseDate.find('=')+2:releaseDate.find('/')-1]
+            releaseDate=datetime.datetime.strptime(releaseDate,"%Y-%m-%d %H:%M:%S")
             text=text[text.find('function pulseTrackPhoneNumberDisplayed(event)'):text.find('function pulseTrackAdReplySubmitted')]
             text=text[text.find('object'):text.find('});')+1]              
             
@@ -37,6 +40,7 @@ def GetKufarAdList(page_text):
             ADdict['Subarea']=ADdict['location']['addressSubarea']
             ADdict['href']=i.get("href")
             ADdict['title']=i.text_content()
+            ADdict['release_timestamp']=releaseDate
             del ADdict['location']
             resultList.append(ADdict)
         except:
