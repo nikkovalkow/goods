@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
-from urllib.request import Request, urlopen
+from urllib.request import  urlopen, Request
 import urllib.error
 import lxml.html as html
 import pymongo
@@ -12,7 +12,7 @@ import pprint
 
 import demjson
 import time
-import sys
+
 
 
 def DBPutLogMessage(message):
