@@ -1,4 +1,5 @@
-import pymongo
+# -*- coding: utf-8 -*-
+
 
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["kufar"]
