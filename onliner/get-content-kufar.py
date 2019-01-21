@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import functions_kufar
+from functions_kufar import *
 
     
 

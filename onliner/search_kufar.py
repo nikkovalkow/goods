@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from functions_kufar import *
+
 
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["kufar"]

@@ -68,4 +68,5 @@ def GetPageText(url):
 
 def ExceptionMessage(command):
     DBPutLogMessage(command)
+    print(command)
     
