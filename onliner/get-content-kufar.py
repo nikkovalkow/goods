@@ -17,6 +17,8 @@ def GetKufarAdList(page_text):
         try:         
             #extracting JajaScriptObject from page
             text=GetPageText(quote(i.get("href"),safe="%/:=&?~#+!$,;'@()*[]"))
+            releaseDate=texttext[text.find('<meta itemprop="releaseDate" content="'):text.find('/>')]
+            print(releaseDate)
             text=text[text.find('function pulseTrackPhoneNumberDisplayed(event)'):text.find('function pulseTrackAdReplySubmitted')]
             text=text[text.find('object'):text.find('});')+1]              
             
