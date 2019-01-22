@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from functions_kufar import *
+import pprint
+
+myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 
 catalog={}
 
-for page in range(1,2):
+for page in range(1,1000):
     
     page_text=GetPageText('https://phone.1k.by/mobile/all-list/page'+str(page))
 
@@ -26,10 +29,13 @@ for page in range(1,2):
                 price=0
                 
             m=m[:m.find("от")]
-            models.append([m,price])
+            models.append([m,price,0])
 
-        catalog[manufacture[0].text]=models
+        DBPutObject(myclient,'kufar','catalog',{'manufature':manufacture[0].text,'models':models})
+        
 
-print(catalog)    
+
+
+
 
 
