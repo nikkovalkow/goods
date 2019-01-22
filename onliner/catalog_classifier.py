@@ -36,15 +36,19 @@ def compareWords(str1,str2):
     return((maxLen-LivenstainDistance(str1,str2))/maxLen)
 
 
-def compareStrings(str1,str2):
+def compareStrings(str1,str2,c):
     result=[]
     wordResult=[]
     
     for word1 in str1.split(' '):
+        wordResult=[]
         for word2 in str2.split(' '):         
-            wordResult.append(compareWords(word1,word2))
-            print(compareWords(word1,word2),'/',word1,'/',word2)
-        result.append(wordResult)
+            compResult=compareWords(word1,word2)
+            if compResult>=c:
+                result.append(1)
+                break
+            
+        
     return result
             
             
@@ -66,11 +70,13 @@ except:
 
 
 
-objList=mycol.find({}).limit(100)
+objList=mycol.find({}).limit(10000)
 
-for i in objList:  
+for i in objList:
+    
     title=i['title'].replace('\r','').replace('\n','').replace('\t','').replace('  ','').lower()
-    compareStrings('Iphone 6s'.lower(),title.lower())
+    result=compareStrings('iphone 6s'.lower(),title.lower(),0.8)
+    if len(result)>1: print(result,title,i.get('price'))
    
 
 #print(LivenstainDistance('s6','blackview'))    
