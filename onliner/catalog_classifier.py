@@ -76,7 +76,7 @@ def ClassifyAd(title,catalog_name):
     try:
         myclient = pymongo.MongoClient("mongodb://localhost:27017/")
         mydb = myclient["kufar"]
-        mycol_catalog = mydb['catalog2']
+        mycol_catalog = mydb[catalog_name]
        
         
     except:

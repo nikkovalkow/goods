@@ -60,7 +60,7 @@ for m in page:
                 phone_model=phone_model[phone_model.find(' ')+1:].strip().lower()
                 model_list.append(phone_model)
         print(manufacture_name,model_list)
-        DBPutObject(myclient,'kufar','catalog2',{'manufature':manufacture_name,'models':model_list})
+        DBPutObject(myclient,'kufar','catalog2',{'manufature':manufacture_name,'models':[model_list,0,0]})
         model_list=[]
         
                 
