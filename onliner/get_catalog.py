@@ -58,9 +58,9 @@ for m in page:
                 phone_model=phone.text_content()
                 manufacture_name=phone_model[:phone_model.find(' ')].strip().lower()
                 phone_model=phone_model[phone_model.find(' ')+1:].strip().lower()
-                model_list.append(phone_model)
+                model_list.append([phone_model,0,0])
         print(manufacture_name,model_list)
-        DBPutObject(myclient,'kufar','catalog2',{'manufature':manufacture_name,'models':[model_list,0,0]})
+        DBPutObject(myclient,'kufar','catalog2',{'manufature':manufacture_name,'models':model_list})
         model_list=[]
         
                 
