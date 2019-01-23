@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from functions_kufar import *
+import pprint
 
 
 
@@ -37,47 +38,105 @@ def compareWords(str1,str2):
 
 
 def compareStrings(str1,str2,c):
+    
     result=[]
     wordResult=[]
     
-    for word1 in str1.split(' '):
+    for word1 in str1.lstrip().split(' '):
         wordResult=[]
         for word2 in str2.split(' '):         
             compResult=compareWords(word1,word2)
             if compResult>=c:
                 result.append(1)
                 break
+        
             
         
     return result
-            
+
+def countWords(str1):
+    text=str1.strip()
+    text=text.rstrip()
+    c=0
+    for word in text.split(' '):
+        c=c+1
+    return c            
             
         
     
 
 
+
+
+
+
+
+def ClassifyAd(title,catalog_name):
+    Result=[]
+    try:
+        myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+        mydb = myclient["kufar"]
+        mycol_catalog = mydb['catalog2']
+       
+        
+    except:
+        ExceptionMessage("recheck_dead.py - DB OPEN ERROR")
+        return None
+    
+    
+    catalog=mycol_catalog.find()
+
+    lastResult=0
+    for manufacture in catalog: # for each manufacturer
+        
+
+        for model in manufacture['models']: #for each model in manufacturer
+            
+            mdl=model[0].lower().strip()
+            haveToMatch=countWords(mdl)
+            #if (haveToMatch<2 and len(mdl)<4): # if model is one small word + add manufacturer to model
+            mdl=manufacture['manufature'].strip().lower()+' '+mdl
+            haveToMatch=countWords(mdl)
+            
+            
+                
+            title=title.replace('\r','').replace('\n','').replace('\t','').replace('  ','').lower().strip()
+                
+            compResult=compareStrings(mdl,title,0.8)
+            
+            
+            if len(compResult)>lastResult:
+                lastResult=len(compResult)
+                Result.append([len(compResult),mdl,manufacture['manufature'].strip().lower()])
+                
+    if len(Result)>0:
+        return Result[-1]
+    else:
+        return []
+            
+'''        
 
 try:
     myclient = pymongo.MongoClient("mongodb://localhost:27017/")
     mydb = myclient["kufar"]
-    mycol_catalog = mydb["catalog"]
-    mycol=mydb["data"]
-    mycol_sold=mydb["data_sold"]
+    mycol = mydb["data"]
+       
+        
 except:
     ExceptionMessage("recheck_dead.py - DB OPEN ERROR")
-    exit
-
-
-
-
-objList=mycol.find({}).limit(10000)
-
-for i in objList:
     
-    title=i['title'].replace('\r','').replace('\n','').replace('\t','').replace('  ','').lower()
-    result=compareStrings('iphone 6s'.lower(),title.lower(),0.8)
-    if len(result)>1: print(result,title,i.get('price'))
-   
+
+adList=mycol.find({}).limit(200)
+for ad in adList:
+    print(ad.get('title').replace('\r','').replace('\n','').replace('\t','').replace('  ','').lower().strip())
+    print (ClassifyAd(ad.get('title')))
+    print (ClassifyAd(ad.get('description')))
+    print('')
+    print('')
+    
+'''
+
+
 
 #print(LivenstainDistance('s6','blackview'))    
 
