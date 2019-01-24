@@ -13,14 +13,14 @@ for o in mycol.find({"classificator":None}):
     days=(o['dead_timestamp']-o['release_timestamp']).days
     classify=ClassifyAd(o['title'])    
        
-    #newvalues = { "$set": { "classificator": classify } } 
-    #mycol.update_many({'href':o['href']},newvalues)
-    #newvalues = { "$set": { "days_for_sale": days } } 
-    #mycol.update_many({'href':o['href']},newvalues)
-    #x=x+1
-    #print('item: ',x)
-    #print(classify)
-    #print(clearString(o.get('title')))
+    newvalues = { "$set": { "classificator": classify } } 
+    mycol.update_many({'href':o['href']},newvalues)
+    newvalues = { "$set": { "days_for_sale": days } } 
+    mycol.update_many({'href':o['href']},newvalues)
+    x=x+1
+    print('item: ',x)
+    print(classify)
+    print(clearString(o.get('title')))
     
     
 
