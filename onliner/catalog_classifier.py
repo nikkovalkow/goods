@@ -132,18 +132,8 @@ def ClassifyAdCat(title,catalog_name):
 
 def ClassifyAd(iteam):
     catalogResult=ClassifyAdCat(iteam,'catalog')
-    catalog2Result=ClassifyAdCat(iteam,'catalog2')
-    if catalogResult[0]>catalog2Result[0]:
-        return catalogResult
-    elif catalogResult[0]<catalog2Result[0]:
-        return catalog2Result
-    else:
-        if catalogResult[1]>catalog2Result[1]:
-            return catalogResult
-        elif catalogResult[1]<catalog2Result[1]:
-            return catalog2Result
-        else:
-            return catalogResult 
+    
+            
     
 
 def tanimotok(s1, s2):
