@@ -106,13 +106,26 @@ def ClassifyAd(title,catalog_name):
             
             
             if len(compResult)>lastResult:
+                Result=[]
                 lastResult=len(compResult)
                 Result.append([len(compResult),mdl,manufacture['manufature'].strip().lower()])
+            elif len(compResult)==lastResult:
+                Result.append([len(compResult),mdl,manufacture['manufature'].strip().lower()])
+                
                 
     if len(Result)>0:
-        return Result[-1]
+        return Result
     else:
         return []
+
+def tanimoto(s1, s2):
+    a, b, c = len(s1), len(s2), 0.0
+
+    for sym in s1:
+        if sym in s2:
+            c += 1
+
+    return c / (a + b - c)
             
 '''        
 
