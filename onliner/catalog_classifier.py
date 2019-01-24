@@ -94,21 +94,21 @@ def ClassifyAdCat(title,catalog_name):
 
         for model in manufacture['models']: #for each model in manufacturer
             
-            mdl=model[0].lower().strip()
-            haveToMatch=countWords(mdl)
+            mdl=clearString(model[0])
+            
             #if (haveToMatch<2 and len(mdl)<4): # if model is one small word + add manufacturer to model
             mdl=manufacture['manufature'].strip().lower()+' '+mdl
-            haveToMatch=countWords(mdl)
+            
             
             
                 
             title=clearString(title)
             mdl=clearString(mdl)
             compResult=compareStrings(mdl,title,0.8)
-            tanimotoResult=compareWords(mdl,title)
-            compWords=compareWords(mdl,title)
-            if len(compResult)>1:
-                print('COMPARE: ',title,' AND: ',mdl,"RESULT:",compResult,tanimotoResult,compWords)
+            tanimotoResult=compareWords(mdl,title)*tanimotok(mdl,title)
+            
+            #if len(compResult)>1:
+            #    print('COMPARE: ',title,' AND: ',mdl,"RESULT:",compResult,tanimotoResult,compWords)
             
             if len(compResult)>lastResult:
                 Result=[]
@@ -129,6 +129,7 @@ def ClassifyAdCat(title,catalog_name):
         return Result[0]
     else:
         return []
+
 def ClassifyAd(iteam):
     catalogResult=ClassifyAdCat(iteam,'catalog')
     catalog2Result=ClassifyAdCat(iteam,'catalog2')
@@ -153,40 +154,18 @@ def tanimotok(s1, s2):
             c += 1
 
     return c / (a + b - c)
+
+
 def clearString(str1):
     str1=str1.replace('\r','').replace('\n','').replace('\t','').replace('(',' ')
-    str1=str1.replace(')',' ').replace(',',' ').replace('.','').replace('-','')
+    str1=str1.replace(')',' ').replace(',',' ').replace('.','').replace('-',' ')
     str1=str1.replace('  ','').lower().strip()
     return str1
     
             
 
 
-'''        
 
-try:
-    myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-    mydb = myclient["kufar"]
-    mycol = mydb["data"]
-       
-        
-except:
-    ExceptionMessage("recheck_dead.py - DB OPEN ERROR")
-    
-
-adList=mycol.find({}).limit(200)
-for ad in adList:
-    print(ad.get('title').replace('\r','').replace('\n','').replace('\t','').replace('  ','').lower().strip())
-    print (ClassifyAd(ad.get('title')))
-    print (ClassifyAd(ad.get('description')))
-    print('')
-    print('')
-    
-'''
-
-
-
-#print(LivenstainDistance('s6','blackview'))    
 
 
     
