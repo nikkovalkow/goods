@@ -106,8 +106,7 @@ def ClassifyAdCat(title,catalog_name):
             mdl=clearString(mdl)
             compResult=compareStrings(mdl,title,1)
             tanimotoResult=tanimotok(mdl,title)
-            if len(compResult)>1:
-                print('COMPARE: ',title,' AND: ',mdl,"RESULT:",len(compResult),tanimotoResult)
+            
             
             if len(compResult)>lastResult:
                 Result=[]
