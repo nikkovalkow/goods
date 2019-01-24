@@ -131,7 +131,7 @@ def ClassifyAdCat(title,catalog_name):
         return []
 
 def ClassifyAd(iteam):
-    catalogResult=ClassifyAdCat(iteam,'catalog')
+    return ClassifyAdCat(iteam,'catalog')
     
             
     
