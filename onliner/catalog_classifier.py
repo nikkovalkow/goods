@@ -87,6 +87,7 @@ def ClassifyAd(title,catalog_name):
     catalog=mycol_catalog.find()
 
     lastResult=0
+    lastTanimoto=0
     for manufacture in catalog: # for each manufacturer
         
 
@@ -102,23 +103,31 @@ def ClassifyAd(title,catalog_name):
                 
             title=title.replace('\r','').replace('\n','').replace('\t','').replace('  ','').lower().strip()
                 
-            compResult=compareStrings(mdl,title,0.8)
+            compResult=compareStrings(title,mdl,0.8)
+            tanimotoResult=tanimotok(mdl,title)
             
             
             if len(compResult)>lastResult:
                 Result=[]
                 lastResult=len(compResult)
-                Result.append([len(compResult),mdl,manufacture['manufature'].strip().lower()])
+                lastTanimoto=tanimotoResult
+                Result.append([len(compResult),tanimotoResult,mdl,manufacture['manufature'].strip().lower()])
             elif len(compResult)==lastResult:
-                Result.append([len(compResult),mdl,manufacture['manufature'].strip().lower()])
+                if tanimotoResult>lastTanimoto:
+                    lastTanimoto=tanimotoResult
+                    Result=[]
+                    Result.append([len(compResult),tanimotoResult,mdl,manufacture['manufature'].strip().lower()])
+                elif tanimotoResult==lastTanimoto:
+                    Result.append([len(compResult),tanimotoResult,mdl,manufacture['manufature'].strip().lower()])
+                    
                 
                 
     if len(Result)>0:
-        return Result
+        return Result[0]
     else:
         return []
 
-def tanimoto(s1, s2):
+def tanimotok(s1, s2):
     a, b, c = len(s1), len(s2), 0.0
 
     for sym in s1:
