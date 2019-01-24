@@ -37,12 +37,9 @@ title8='Iphone 6s 64gb'
 #print(tanimotok('apple iphone 6s 16gb space gray новый','apple iphone 6s'))
 #print(tanimotok('apple iphone 6s 16gb space gray новый','apple iphone 6s plus'))
 
-#cat1=ClassifyAdCat(title5,'catalog')
+cat1=ClassifyAdCat(title5,'catalog')
 #cat2=ClassifyAdCat(title6,'catalog')
-title5=clearString(title5).split(' ')
-print(title5)
-title5=' '.join(title5)
-print(title5)
-#print(cat1)
+
+print(cat1)
 #print(cat2)
 

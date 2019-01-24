@@ -41,16 +41,16 @@ def compareStrings(str1,str2,c):
     
     result=[]
     wordResult=[]
+    lastResult=0
     
     for word1 in str1.split(' '):
-        wordResult=[]
+        lastResult=0
         for word2 in str2.split(' '):         
             compResult=compareWords(word1,word2)
-            if compResult>=c:
-                result.append(1)
-                break
-        
-            
+            if compResult>lastResult:
+                lastResult=compResult
+        if lastResult!=0 and lastResult>=c:
+            result.append(lastResult)         
         
     return result
 
@@ -104,10 +104,11 @@ def ClassifyAdCat(title,catalog_name):
                 
             title=clearString(title)
             mdl=clearString(mdl)
-            compResult=compareStrings(mdl,title,1)
-            tanimotoResult=tanimotok(mdl,title)
+            compResult=compareStrings(mdl,title,0.8)
+            tanimotoResult=compareWords(mdl,title)
+            compWords=compareWords(mdl,title)
             if len(compResult)>1:
-                print('COMPARE: ',title,' AND: ',mdl,"RESULT:",len(compResult),tanimotoResult)
+                print('COMPARE: ',title,' AND: ',mdl,"RESULT:",compResult,tanimotoResult,compWords)
             
             if len(compResult)>lastResult:
                 Result=[]
