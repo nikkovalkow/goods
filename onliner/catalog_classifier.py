@@ -42,7 +42,7 @@ def compareStrings(str1,str2,c):
     result=[]
     wordResult=[]
     
-    for word1 in str1.lstrip().split(' '):
+    for word1 in str1.split(' '):
         wordResult=[]
         for word2 in str2.split(' '):         
             compResult=compareWords(word1,word2)
@@ -71,7 +71,8 @@ def countWords(str1):
 
 
 
-def ClassifyAd(title,catalog_name):
+def ClassifyAdCat(title,catalog_name):
+    #classify AD based on single catalog
     Result=[]
     try:
         myclient = pymongo.MongoClient("mongodb://localhost:27017/")
@@ -101,11 +102,12 @@ def ClassifyAd(title,catalog_name):
             
             
                 
-            title=title.replace('\r','').replace('\n','').replace('\t','').replace('  ','').lower().strip()
-                
-            compResult=compareStrings(title,mdl,0.8)
+            title=clearString(title)
+            mdl=clearString(mdl)
+            compResult=compareStrings(mdl,title,1)
             tanimotoResult=tanimotok(mdl,title)
-            
+            if len(compResult)>1:
+                print('COMPARE: ',title,' AND: ',mdl,"RESULT:",len(compResult),tanimotoResult)
             
             if len(compResult)>lastResult:
                 Result=[]
@@ -113,7 +115,7 @@ def ClassifyAd(title,catalog_name):
                 lastTanimoto=tanimotoResult
                 Result.append([len(compResult),tanimotoResult,mdl,manufacture['manufature'].strip().lower()])
             elif len(compResult)==lastResult:
-                if tanimotoResult>lastTanimoto:
+                if tanimotoResult>lastTanimoto and tanimotoResult<1:
                     lastTanimoto=tanimotoResult
                     Result=[]
                     Result.append([len(compResult),tanimotoResult,mdl,manufacture['manufature'].strip().lower()])
@@ -126,6 +128,21 @@ def ClassifyAd(title,catalog_name):
         return Result[0]
     else:
         return []
+def ClassifyAd(iteam):
+    catalogResult=ClassifyAdCat(iteam,'catalog')
+    catalog2Result=ClassifyAdCat(iteam,'catalog2')
+    if catalogResult[0]>catalog2Result[0]:
+        return catalogResult
+    elif catalogResult[0]<catalog2Result[0]:
+        return catalog2Result
+    else:
+        if catalogResult[1]>catalog2Result[1]:
+            return catalogResult
+        elif catalogResult[1]<catalog2Result[1]:
+            return catalog2Result
+        else:
+            return catalogResult 
+    
 
 def tanimotok(s1, s2):
     a, b, c = len(s1), len(s2), 0.0
@@ -135,7 +152,15 @@ def tanimotok(s1, s2):
             c += 1
 
     return c / (a + b - c)
+def clearString(str1):
+    str1=str1.replace('\r','').replace('\n','').replace('\t','').replace('(',' ')
+    str1=str1.replace(')',' ').replace(',',' ').replace('.','').replace('-','')
+    str1=str1.replace('  ','').lower().strip()
+    return str1
+    
             
+
+
 '''        
 
 try:
