@@ -10,6 +10,7 @@ days_stat={}
 result=mycol.find({"classificator":None},no_cursor_timeout=True)
 x=0
 print ('To clasify:',mycol.count_documents({"classificator":None}))
+
 for o in result:
     
     days=(o['dead_timestamp']-o['release_timestamp']).days
