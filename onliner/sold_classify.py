@@ -7,10 +7,10 @@ mycol = mydb["data_sold"]
 
 days_stat={}
 
-result=mycol.find()
+result=mycol.find({"classificator":None})
 x=0
-
-for o in mycol.find({"classificator":None}):
+print ('To clasify:',mycol.count_documents({"classificator":None}))
+for o in result:
     days=(o['dead_timestamp']-o['release_timestamp']).days
     classify=ClassifyAd(o['title'])    
        

@@ -97,13 +97,13 @@ def ClassifyAdCat(title,catalog_name):
             mdl=clearString(model[0])
             
             #if (haveToMatch<2 and len(mdl)<4): # if model is one small word + add manufacturer to model
-            mdl=manufacture['manufature'].strip().lower()+' '+mdl
+            
             
             
             
                 
             title=clearString(title)
-            mdl=clearString(mdl)
+           
             compResult=compareStrings(mdl,title,0.8)
             tanimotoResult=compareWords(mdl,title)*tanimotok(mdl,title)
             
