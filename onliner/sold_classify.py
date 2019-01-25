@@ -9,6 +9,7 @@ days_stat={}
 
 result=mycol.find()
 x=0
+
 for o in mycol.find({"classificator":None}):
     days=(o['dead_timestamp']-o['release_timestamp']).days
     classify=ClassifyAd(o['title'])    

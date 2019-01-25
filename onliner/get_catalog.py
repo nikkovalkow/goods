@@ -33,7 +33,7 @@ for page in range(1,1000):
 
         DBPutObject(myclient,'kufar','catalog',{'manufature':manufacture[0].text,'models':models})
         
-'''
+
 
 #smartphone.ua
 
@@ -62,7 +62,43 @@ for m in page:
         print(manufacture_name,model_list)
         DBPutObject(myclient,'kufar','catalog2',{'manufature':manufacture_name,'models':model_list})
         model_list=[]
+'''
+
+
+#shop.by
+
+model_list=[]
+manufacture_name=''
+page_text=GetPageText('https://shop.by/telefony_mobilnye/')
+page=html.document_fromstring(page_text)
+page=page.find_class('ModelFilter__CheckboxLink')
+for manufacture in page:
+    
+    if (manufacture.get('href')==None): break 
+    href=manufacture.get('href').strip()
+    manufact=href.split('/')[2]
+    print(href, manufact)
+
+    for page_num in range (0,50):
         
+        page2_text=GetPageText('https://shop.by'+href+'?page_id='+str(page_num)+'&page_size=96&currency=BYB&sort=popularity--number&in_sale_only=0&key=show&mode=find')
+        page2=html.document_fromstring(page2_text)
+        page2=page2.find_class('ModelList__LinkModel')
+        if (len(page2)==0): break
+
+        for mdl in page2:
+            if mdl.get('title')!=None:
+                model_list.append([mdl.get('title').replace(u'\xa0', u' '),0,0])
+                
+    DBPutObject(myclient,'kufar','catalog3',{'manufature':manufact,'models':model_list})
+    print(manufact,model_list)
+    model_list=[]
+    
+   
+    
+
+
+
                 
 
 
