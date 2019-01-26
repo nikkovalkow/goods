@@ -25,8 +25,7 @@ def DBPutLogMessage(message):
 def DBPutObject(db_client,db_name, collection_name, dict_obj):
 
     try:
-        myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-        mydb = myclient[db_name]
+        mydb = db_client[db_name]
         mycol = mydb[collection_name]
         mycol.insert_one(dict_obj)
     except:

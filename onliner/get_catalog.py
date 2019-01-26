@@ -67,7 +67,7 @@ for m in page:
 
 #shop.by
 
-model_list=[]
+
 manufacture_name=''
 page_text=GetPageText('https://shop.by/telefony_mobilnye/')
 page=html.document_fromstring(page_text)
@@ -88,11 +88,12 @@ for manufacture in page:
 
         for mdl in page2:
             if mdl.get('title')!=None:
-                model_list.append([mdl.get('title').replace(u'\xa0', u' '),0,0])
+                print(mdl.get('title').replace(u'\xa0', u' '))
+                DBPutObject(myclient,'kufar','catalog',{'manufacture':manufact,'model':mdl.get('title').replace(u'\xa0', u' ')})
                 
-    DBPutObject(myclient,'kufar','catalog3',{'manufature':manufact,'models':model_list})
-    print(manufact,model_list)
-    model_list=[]
+    
+    
+   
     
    
     

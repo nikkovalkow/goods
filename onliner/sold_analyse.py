@@ -9,7 +9,7 @@ import numpy as np
 
 def getMeanAndStdPrice(model):
 
-    myclient = pymongo.MongoClient("mongodb://192.168.100.104:27017/")
+    myclient = pymongo.MongoClient("mongodb://localhost:27017/")
     mydb = myclient["kufar"]
     mycol = mydb["data_sold"]
 
@@ -29,7 +29,7 @@ def getMeanAndStdPrice(model):
 
 def getMeanAndStdDays(model):
 
-    myclient = pymongo.MongoClient("mongodb://192.168.100.104:27017/")
+    myclient = pymongo.MongoClient("mongodb://localhost:27017/")
     mydb = myclient["kufar"]
     mycol = mydb["data_sold"]
 
