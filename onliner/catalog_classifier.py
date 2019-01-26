@@ -147,6 +147,10 @@ def ClassifyAdCat(title,catalog_name):
 
 def ClassifyAd(iteam):
     return ClassifyAdCat(iteam,'catalog')
+
+
+
+
     
             
     

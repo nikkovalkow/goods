@@ -31,18 +31,4 @@ result.close()
 
 
         
-'''
-title='Iphone 7-32gb бу оригинал все работает'
-title='Iphone 6s gold 64'
 
-
-#print(tanimotok('apple iphone 6s 16gb space gray новый','apple iphone 6s'))
-#print(tanimotok('apple iphone 6s 16gb space gray новый','apple iphone 6s plus'))
-
-cat1=ClassifyAdCat(title5,'catalog')
-#cat2=ClassifyAdCat(title6,'catalog')
-
-print(cat1)
-#print(cat2)
-
-'''
