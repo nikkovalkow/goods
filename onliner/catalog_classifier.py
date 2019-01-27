@@ -146,7 +146,12 @@ def ClassifyAdCat(title,catalog_name):
         return []
 
 def ClassifyAd(iteam):
-    return ClassifyAdCat(iteam,'catalog')
+    try:
+        return ClassifyAdCat(iteam,'catalog')
+    except:
+        return []
+        
+   
 
 
 

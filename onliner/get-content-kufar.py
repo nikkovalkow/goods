@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from functions_kufar import *
-
+from catalog_classifier import *
     
 
 def GetKufarAdList(page_text):
@@ -63,6 +63,7 @@ def PutDictListToDB(adList,timestamp):
             if mycol.count_documents({'href':Ad['href']})==0: #if not exists with the same URL
                 Ad['timestamp']=timestamp
                 Ad['first_timestamp']=timestamp
+                Ad['classificator']=ClassifyAd(clearString(Ad['title']))
                 DBPutObject(myclient,'kufar','data',Ad)
                 NewADCount=NewADCount+1
             else:
