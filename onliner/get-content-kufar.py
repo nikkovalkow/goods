@@ -43,8 +43,9 @@ def GetKufarAdList(page_text):
             ADdict['release_timestamp']=releaseDate
             del ADdict['location']
             resultList.append(ADdict)
-        except:
-            DBPutLogMessage("GetKufarADList() AD add failed link:" + i.get("href"))
+        except Exception as e:
+            
+            DBPutLogMessage("GetKufarADList() AD add failed link:" + i.get("href")+' '+str(e))
             
             
     return resultList    
