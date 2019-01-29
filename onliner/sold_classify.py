@@ -13,19 +13,25 @@ print ('To clasify:',mycol.count_documents({"days_for_sale":None}))
 
 for o in result:
     
+    
     days=(o['dead_timestamp']-o['release_timestamp']).days
-    classify=ClassifyAd(o['title'])    
+
+    if (o.get('classificator')==None) or o.get('classificator')==[]:
+        classify=ClassifyAd(o['title'])
+        newvalues = { "$set": { "classificator": classify } } 
+        mycol.update_many({'href':o['href']},newvalues)
+    else:
+        classify=o.get('classificator')
+        
        
-    newvalues = { "$set": { "classificator": classify } } 
-    mycol.update_many({'href':o['href']},newvalues)
+    
     newvalues = { "$set": { "days_for_sale": days } } 
     mycol.update_many({'href':o['href']},newvalues)
     x=x+1
     print('item: ',x)
     print(classify)
     print(clearString(o.get('title')))
-result.close()
-    
+result.close()    
     
 
 
