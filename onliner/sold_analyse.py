@@ -7,7 +7,9 @@ import numpy as np
 
 
 
-def getMeanAndStdPrice(model):
+def getMeanAndStdPrice(model,std_cut=0):
+    #model - model string from catalog
+    #std_cut - how many values std*std_cut must be excluded from mean and std calculation
 
     myclient = pymongo.MongoClient("mongodb://localhost:27017/")
     mydb = myclient["kufar"]
@@ -21,16 +23,26 @@ def getMeanAndStdPrice(model):
         return []
     for phone in result:
         if phone.get('price')!=None:
+            
             price.append(phone.get('price')/100)
             
     price=np.array(price)
     
+    
     price_std=price.std()
     price_mean=price.mean()
+    
+    if std_cut!=0:
+        price=price[price>(price_mean-(price_std*std_cut))]
+        price=price[price<(price_mean+(price_std*std_cut))]
+        price_std=price.std()
+        price_mean=price.mean()
+        
+    
 
     return [price_mean,price_std]
 
-def getMeanAndStdDays(model):
+def getMeanAndStdDays(model,std_cut=0):
 
     myclient = pymongo.MongoClient("mongodb://localhost:27017/")
     mydb = myclient["kufar"]
@@ -47,9 +59,17 @@ def getMeanAndStdDays(model):
             days.append(phone.get('days_for_sale'))
             
     days=np.array(days)
-    
+
     days_std=days.std()
     days_mean=days.mean()
+
+    
+    if std_cut!=0:
+        days=days[days>(days_mean-(days_std*std_cut))]
+        days=days[days<(days_mean+(days_std*std_cut))]
+        days_std=days.std()
+        days_mean=days.mean()
+        
 
     return [days_mean,days_std]
 
@@ -103,11 +123,16 @@ def printTopSoldModels():
 
 
 
+
+
+print (getMeanAndStdPrice(clearString('Apple iPhone 5s 16Gb Silver')))
+print (getMeanAndStdPrice(clearString('Apple iPhone 5s 16Gb Silver'),2))
+
+print (getMeanAndStdDays(clearString('Apple iPhone 5s 16Gb Silver')))
+print (getMeanAndStdDays(clearString('Apple iPhone 5s 16Gb Silver'),0.8))
+
 '''
-
-print (getMeanAndStdPrice('apple iphone 7 32gb rose gold'))
 print (getMeanAndStdDays('apple iphone 7 32gb rose gold'))
-
 
 myclient = pymongo.MongoClient("mongodb://192.168.100.104:27017/")
 mydb = myclient["kufar"]
