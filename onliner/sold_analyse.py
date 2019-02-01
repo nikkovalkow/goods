@@ -75,16 +75,15 @@ def getMeanAndStdDays(model,std_cut=0):
 
 
 
-def printTopSoldModels():
+def getTopSoldModels(list_length=15):
     myclient = pymongo.MongoClient("mongodb://localhost:27017/")
     mydb = myclient["kufar"]
     mycol = mydb["data_sold"]
     
-    
+    top_models={}
     days_stat={}
 
     result=mycol.find({"classificator": {'$ne' : None}})
-    print ('To analyse:',mycol.count_documents({"classificator": {'$ne' : None}}))
     model_stat={}
     # clear from yandex phone
     #mycol.delete_many({"classificator":'яндекс телефон'})
@@ -108,28 +107,26 @@ def printTopSoldModels():
                
     k=list(model_stat.keys())
     v=list(model_stat.values())
-    print (k[0])
+ 
     model_stat=pd.DataFrame({"Model":k,"Q":v})    
     model_stat=model_stat.sort_values(by=['Q'],ascending=False).reset_index()
-        
-    for ind in model_stat.index:
-        Q=model_stat['Q'][ind]
-        model=model_stat['Model'][ind]
-        print (model_stat['Model'][ind], model_stat['Q'][ind])
-        print(getMeanAndStdPrice(model_stat['Model'][ind]))
-        #result=mycol.find({"classificator": model})
-        if Q<15: break
+    model_stat=model_stat.drop(columns="index")
+
+    return model_stat.head(list_length)    
+    
+
+
+print(getTopSoldModels(100))
 
 
 
 
 
 
-print (getMeanAndStdPrice(clearString('Apple iPhone 5s 16Gb Silver')))
-print (getMeanAndStdPrice(clearString('Apple iPhone 5s 16Gb Silver'),2))
+print (getMeanAndStdPrice(clearString('apple iphone 6 16gb gold')))
+print (getMeanAndStdPrice(clearString('apple iphone 6 16gb gold'),2))
 
-print (getMeanAndStdDays(clearString('Apple iPhone 5s 16Gb Silver')))
-print (getMeanAndStdDays(clearString('Apple iPhone 5s 16Gb Silver'),0.8))
+
 
 '''
 print (getMeanAndStdDays('apple iphone 7 32gb rose gold'))
