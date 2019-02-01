@@ -23,10 +23,27 @@ def essential():
         mydb = myclient["kufar"]
         mycol = mydb["data_essential"]
         text='<table>'
+        text=text+'<tr>'
+        text=text+'<th>Title</th>'
+        text=text+'<th>Price</th>'
+        text=text+'<th>Mean price</th>'
+        text=text+'<th>Price diviation</th>'
+        text=text+'<th>Timestamp</th>'
+        
+        
+        
+        
+        
+
+        text=text+'</tr>'
+        
+                
         for i in mycol.find():
                 
         
                 text=text+'<tr>'
+
+               
                 
                 text=text+'<td>'
                 text=text+'<a href='+i.get('href')+">"+str(i.get('title'))+'</a>'
@@ -48,6 +65,10 @@ def essential():
                 
                 text=text+'<td>'
                 text=text+str(int(i.get('price_std')))
+                text=text+'</td>'
+
+                text=text+'<td>'
+                text=text+str(i.get('timestamp'))
                 text=text+'</td>'
 
                 text=text+'</tr>'
