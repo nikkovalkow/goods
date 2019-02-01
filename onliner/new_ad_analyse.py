@@ -11,6 +11,7 @@ def GetKufarNewAdList(page_text):
     myclient = pymongo.MongoClient("mongodb://localhost:27017/")
     mydb = myclient["kufar"]
     mycol = mydb["data"]
+    mycol_operational=mydb["data_operational"]
 
     page=html.document_fromstring(page_text)
     
@@ -19,7 +20,7 @@ def GetKufarNewAdList(page_text):
     resultList=[]
     for i in AdList:
         try:         
-            if mycol.count_documents({'href':quote(i.get("href"),safe="%/:=&?~#+!$,;'@()*[]")})==0:
+            if mycol.count_documents({'href':i.get("href")})==0 and mycol_operational.count_documents({'href':i.get("href")})==0:
                 #extracting JajaScriptObject from page
                 text=GetPageText(quote(i.get("href"),safe="%/:=&?~#+!$,;'@()*[]"))
                 releaseDate=text[text.find('releaseDate'):text.find('releaseDate')+50]
@@ -55,39 +56,9 @@ def GetKufarNewAdList(page_text):
             
     return resultList    
             
-def PutDictListToDB(adList,timestamp):
-    myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-    mydb = myclient["kufar"]
-    mycol = mydb["data"]
-    NewADCount=0
-    ExistADCount=0
-    UpdatedADCount=0
-    for Ad in adList:
-        if mycol.count_documents(Ad)==0:                #if NOT exists EXACT the same
 
-            if mycol.count_documents({'href':Ad['href']})==0: #if not exists with the same URL
-                Ad['timestamp']=timestamp
-                Ad['first_timestamp']=timestamp
-                Ad['classificator']=ClassifyAd(clearString(Ad['title']))
-                DBPutObject(myclient,'kufar','data',Ad)
-                NewADCount=NewADCount+1
-            else:
-                newvalues = { "$set": { "timestamp": timestamp } } # if exists with the same URL
-                mycol.update_many({'href':Ad['href']},newvalues)
-                Ad['timestamp']=timestamp
-                Ad['first_timestamp']=timestamp
-                DBPutObject(myclient,'kufar','data',Ad)
-                UpdatedADCount=UpdatedADCount+1
-                
-        else:                                           #if exist
-            ExistADCount=ExistADCount+1
-            newvalues = { "$set": { "timestamp": timestamp } }
-            mycol.update_many(Ad,newvalues)
-            
-            
-    return [NewADCount,ExistADCount,UpdatedADCount]
-            
-
+def AnalyseNewList(new_list):
+    return 0
             
         
         
@@ -101,6 +72,8 @@ myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["kufar"]
 mycol = mydb["data"]
 
+
+newCount=0
 for pageNum in range (0,1000):
     
     page=GetPageText("https://www.kufar.by/"+quote('минск_город/Телефоны')+'?cu=BYR&phce=1&o='+str(pageNum))
@@ -112,8 +85,10 @@ for pageNum in range (0,1000):
 
         resultList=GetKufarNewAdList(page)
         for ad in resultList:
-            
-            print ("NEW",ad['title'])
+            newCount=newCount+1
+
+        print ("NEW",newCount)
+        newCount=0
             
 
               
