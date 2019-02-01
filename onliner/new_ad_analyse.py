@@ -58,7 +58,7 @@ def GetKufarNewAdList(page_text):
     return resultList    
             
 
-def AnalyseNewList(new_list):
+def AnalyseNewList(new_list,timestamp):
     myclient = pymongo.MongoClient("mongodb://localhost:27017/")
     mydb = myclient["kufar"]
     top_list=getTopSoldModels(25)
@@ -86,7 +86,7 @@ def AnalyseNewList(new_list):
             if price<=price_mean and price>price_mean-(price_std*1.5):
                 Ad['price_mean']=price_mean
                 Ad['price_std']=price_std
-                Ad['timestamp']=datetime.datetime.now()
+                Ad['timestamp']=timestamp
                 DBPutObject(myclient,'kufar','data_essential',Ad)
                 print(model,price)
                 print(clearString(Ad['title']))
@@ -124,7 +124,7 @@ for pageNum in range (0,1000):
         resultList=GetKufarNewAdList(page)
         for ad in resultList:
             newCount=newCount+1
-        AnalyseNewList(resultList)
+        AnalyseNewList(resultList,timestamp)
 
         print ("NEW",newCount)
         newCount=0
