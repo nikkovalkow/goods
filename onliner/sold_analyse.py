@@ -14,13 +14,15 @@ def getMeanAndStdPrice(model,std_cut=0):
     myclient = pymongo.MongoClient("mongodb://localhost:27017/")
     mydb = myclient["kufar"]
     mycol = mydb["data_sold"]
-
+    price_mean=0
+    price_std=0
     
     result=mycol.find({"classificator":model})
     price=[]
-    
+
     if mycol.count_documents({"classificator":model})<10:
         return []
+    
     for phone in result:
         if phone.get('price')!=None:
             
@@ -117,7 +119,9 @@ def getTopSoldModels(list_length=15):
     return model_stat.head(list_length)    
     
 
+print (getMeanAndStdPrice(clearString('samsung sm n9002 galaxy note 3 dual sim 16gb')))
 
+'''
 print(getTopSoldModels(50))
 
 
@@ -125,12 +129,11 @@ print(getTopSoldModels(50))
 
 
 
-print (getMeanAndStdPrice(clearString('apple iphone 6 16gb gold')))
 print (getMeanAndStdPrice(clearString('apple iphone 6 16gb gold'),2))
 
 
 
-'''
+
 print (getMeanAndStdDays('apple iphone 7 32gb rose gold'))
 
 myclient = pymongo.MongoClient("mongodb://192.168.100.104:27017/")

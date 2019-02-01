@@ -2,6 +2,7 @@
 
 from functions_kufar import *
 from catalog_classifier import *
+from sold_analyse import *
     
 
 def GetKufarNewAdList(page_text):
@@ -58,6 +59,42 @@ def GetKufarNewAdList(page_text):
             
 
 def AnalyseNewList(new_list):
+    myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+    mydb = myclient["kufar"]
+    top_list=getTopSoldModels(25)
+   
+    for Ad in new_list:
+        DBPutObject(myclient,'kufar','data_operational',Ad)
+
+        model=ClassifyAd(clearString(Ad['title']))[2]
+        
+        
+        
+        try:
+            price=Ad.get('price')/100
+        except:
+            price=0
+            
+        if price!=None and (model in list(top_list['Model'])):
+            try:
+                price_mean,price_std=getMeanAndStdPrice(clearString(model),1.5)
+            except:
+                continue
+            
+            
+            if price<=price_mean and price>price_mean-(price_std*1.5):
+                Ad['price_mean']=price_mean
+                Ad['price_std']=price_std
+                
+                DBPutObject(myclient,'kufar','data_essential',Ad)
+                print(model,price)
+                print(clearString(Ad['title']))
+                print(Ad['href'])
+                print(price_mean,price_std)
+                print('-------------')
+
+    
+        
     return 0
             
         
@@ -86,6 +123,7 @@ for pageNum in range (0,1000):
         resultList=GetKufarNewAdList(page)
         for ad in resultList:
             newCount=newCount+1
+        AnalyseNewList(resultList)
 
         print ("NEW",newCount)
         newCount=0
