@@ -76,6 +76,8 @@ def getMeanAndStdDays(model,std_cut=0):
 
 
 def getTopSoldModels(list_length=15):
+
+    
     myclient = pymongo.MongoClient("mongodb://localhost:27017/")
     mydb = myclient["kufar"]
     mycol = mydb["data_sold"]
@@ -116,7 +118,7 @@ def getTopSoldModels(list_length=15):
     
 
 
-print(getTopSoldModels(100))
+print(getTopSoldModels(50))
 
 
 
