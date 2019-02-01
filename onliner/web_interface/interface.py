@@ -22,7 +22,7 @@ def essential():
         myclient = pymongo.MongoClient("mongodb://localhost:27017/")
         mydb = myclient["kufar"]
         mycol = mydb["data_essential"]
-        text='<table>'
+        text='<table border="1">'
         text=text+'<tr>'
         text=text+'<th>Title</th>'
         text=text+'<th>Price</th>'
@@ -45,29 +45,29 @@ def essential():
 
                
                 
-                text=text+'<td>'
+                text=text+'<td align="center">'
                 text=text+'<a href='+i.get('href')+">"+str(i.get('title'))+'</a>'
                 text=text+'</td>'
                 if i.get('price')!=None:
                         
-                        text=text+'<td>'
-                        text=text+str(int(i.get('price'))/100)
+                        text=text+'<td align="center">'
+                        text=text+str(int(int(i.get('price'))/100))
                         text=text+'</td>'
                 else:
-                        text=text+'<td>'
+                        text=text+'<td align="center">'
                         text=text+str(0)
                         text=text+'</td>'
                         
 
-                text=text+'<td>'
+                text=text+'<td align="center">'
                 text=text+str(int(i.get('price_mean')))
                 text=text+'</td>'
                 
-                text=text+'<td>'
+                text=text+'<td align="center">'
                 text=text+str(int(i.get('price_std')))
                 text=text+'</td>'
 
-                text=text+'<td>'
+                text=text+'<td align="center">'
                 text=text+str(i.get('timestamp'))
                 text=text+'</td>'
 
