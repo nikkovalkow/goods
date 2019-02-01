@@ -62,6 +62,7 @@ def AnalyseNewList(new_list):
     myclient = pymongo.MongoClient("mongodb://localhost:27017/")
     mydb = myclient["kufar"]
     top_list=getTopSoldModels(25)
+    
    
     for Ad in new_list:
         DBPutObject(myclient,'kufar','data_operational',Ad)
@@ -85,7 +86,7 @@ def AnalyseNewList(new_list):
             if price<=price_mean and price>price_mean-(price_std*1.5):
                 Ad['price_mean']=price_mean
                 Ad['price_std']=price_std
-                
+                Ad['timestamp']=datetime.datetime.now()
                 DBPutObject(myclient,'kufar','data_essential',Ad)
                 print(model,price)
                 print(clearString(Ad['title']))

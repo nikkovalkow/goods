@@ -115,6 +115,7 @@ def getTopSoldModels(list_length=15):
     model_stat=pd.DataFrame({"Model":k,"Q":v})    
     model_stat=model_stat.sort_values(by=['Q'],ascending=False).reset_index()
     model_stat=model_stat.drop(columns="index")
+    model_stat = model_stat[model_stat.Model !='яндекс телефон']
 
     return model_stat.head(list_length)    
     
