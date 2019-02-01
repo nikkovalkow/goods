@@ -119,11 +119,12 @@ def getTopSoldModels(list_length=15):
 
     return model_stat.head(list_length)    
     
-
+'''
 print (getMeanAndStdPrice(clearString('samsung sm n9002 galaxy note 3 dual sim 16gb')))
 
-'''
+
 print(getTopSoldModels(50))
+
 
 
 
