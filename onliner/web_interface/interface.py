@@ -62,7 +62,7 @@ def essential():
                 text=text+'</td>'
                 
                 text=text+'<td align="center">'
-                text=text+str(price-int(i.get('price_mean')))
+                text=text+str(int(i.get('price_mean'))-price)
                 text=text+'</td>'
 
                 text=text+'<td align="center">'
