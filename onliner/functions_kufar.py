@@ -64,9 +64,11 @@ def GetPageText(url):
         data = response.read()
         encoding = response.headers.get_content_charset('utf-8')
         
-        return data.decode(encoding)
+        return data.decode(encoding,errors='ignore')
 
 def ExceptionMessage(command):
     DBPutLogMessage(command)
     print(command)
+
+
     
