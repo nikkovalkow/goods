@@ -24,7 +24,7 @@ def getMeanAndStdPrice(model,std_cut=0):
         return []
     
     for phone in result:
-        if phone.get('price')!=None:
+        if phone.get('price')!=None and phone.get('days_for_sale')!=60:
             
             price.append(phone.get('price')/100)
             
