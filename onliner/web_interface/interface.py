@@ -27,7 +27,7 @@ def essential():
         text=text+'<th>Title</th>'
         text=text+'<th>Price</th>'
         text=text+'<th>Mean price</th>'
-        text=text+'<th>Price diviation</th>'
+        text=text+'<th>Profit</th>'
         text=text+'<th>Timestamp</th>'
         
         
@@ -49,14 +49,12 @@ def essential():
                 text=text+'<a href='+i.get('href')+">"+str(i.get('title'))+'</a>'
                 text=text+'</td>'
                 if i.get('price')!=None:
-                        
+                        price=int(int(i.get('price'))/100)
                         text=text+'<td align="center">'
                         text=text+str(int(int(i.get('price'))/100))
                         text=text+'</td>'
                 else:
-                        text=text+'<td align="center">'
-                        text=text+str(0)
-                        text=text+'</td>'
+                        continue
                         
 
                 text=text+'<td align="center">'
@@ -64,11 +62,11 @@ def essential():
                 text=text+'</td>'
                 
                 text=text+'<td align="center">'
-                text=text+str(int(i.get('price_std')))
+                text=text+str(price-int(i.get('price_mean')))
                 text=text+'</td>'
 
                 text=text+'<td align="center">'
-                text=text+str(i.get('timestamp'))
+                text=text+str(i.get('timestamp').strftime("%Y-%m-%d %H:%M:%S"))
                 text=text+'</td>'
 
                 text=text+'</tr>'
