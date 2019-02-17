@@ -3,9 +3,14 @@ import time
 import pprint
 from catalog_classifier import *
 from sold_analyse import *
+import logging
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+
+logging.basicConfig(
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        level=logging.INFO)
 
 UsersStates={}
 
