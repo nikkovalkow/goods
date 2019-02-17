@@ -24,12 +24,21 @@ def start(bot, update):
 def textMessage(bot, update):
     print(update.message.text)
     bot.send_message(chat_id=update.message.chat_id, text='хм.. сейчас подумаю..')
-    print(ClassifyAd(update.message.text)[2])
+
+    model=ClassifyAd(update.message.text)[2]
+    print(model)
+    price=getMeanAndStdPrice(model)
+    if price!=[]:
+        price=str(int(price[0]))
+ 
     
         
-    response = "Телефон " + ClassifyAd(update.message.text)[2]+', средняя цена '+str(int(getMeanAndStdPrice(ClassifyAd(update.message.text)[2])[0]))+ " BYN"
-    
-    bot.send_message(chat_id=update.message.chat_id, text=str(response))
+        response = "Телефон " + model+', средняя цена '+price+ " BYN"
+        
+        bot.send_message(chat_id=update.message.chat_id, text=str(response))
+    else:
+        bot.send_message(chat_id=update.message.chat_id, text='Я хз вообще, что за '+model)
+        
 
     
 
