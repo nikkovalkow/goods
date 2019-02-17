@@ -23,9 +23,9 @@ def textMessage(bot, update):
     
     bot.send_message(chat_id=update.message.chat_id, text=str(update.message.chat.first_name))
 
-    response = getMeanAndStdPrice(ClassifyAd(update.message.text))
+    #response = getMeanAndStdPrice(ClassifyAd(update.message.text))
 
-    bot.send_message(chat_id=update.message.chat_id, text=str(update.message.chat.first_name))
+    #bot.send_message(chat_id=update.message.chat_id, text=str(update.message.chat.first_name))
 
     '''
     keyboard = [[InlineKeyboardButton("Iphone 3", callback_data='Iphone 3')],[InlineKeyboardButton("Iphone 4", callback_data='Iphone 4')]]
