@@ -22,15 +22,14 @@ def start(bot, update):
     
 
 def textMessage(bot, update):
-    
-    response = "Вы хотите купить " + ClassifyAd(update.message.text)[2]+" ?"
-    
+    print(update.message.text)
+    print(ClassifyAd(update.message.text)[2])
+        
+    response = "Телефон " + ClassifyAd(update.message.text)[2]+' ,средняя цена '+str(int(getMeanAndStdPrice(ClassifyAd(update.message.text)[2])[0]))+ " BYN"
     
     bot.send_message(chat_id=update.message.chat_id, text=str(response))
 
-    response = getMeanAndStdPrice(ClassifyAd(update.message.text)[2])[0]
-
-    bot.send_message(chat_id=update.message.chat_id, text="Средняя цена около "+str(response))
+    
 
     '''
     keyboard = [[InlineKeyboardButton("Iphone 3", callback_data='Iphone 3')],[InlineKeyboardButton("Iphone 4", callback_data='Iphone 4')]]
