@@ -1,7 +1,8 @@
 import requests
 import time
 import pprint
-from catalog_classifier import * 
+from catalog_classifier import *
+from sold_analyse import *
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
