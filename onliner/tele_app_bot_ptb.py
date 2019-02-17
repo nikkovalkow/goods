@@ -23,7 +23,7 @@ def start(bot, update):
 
 def textMessage(bot, update):
     
-    response = "Вы хотите купить " + ClassifyAd(update.message.text)+" ?"
+    response = "Вы хотите купить " + ClassifyAd(update.message.text)[2]+" ?"
     
     
     bot.send_message(chat_id=update.message.chat_id, text=str(update.message.chat.first_name))
