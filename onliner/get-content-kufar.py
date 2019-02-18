@@ -2,14 +2,56 @@
 
 from functions_kufar import *
 from catalog_classifier import *
-    
+
+def GetPageAdLinkListKufar(page_text):
+
+    page = html.document_fromstring(page_text)
+    AdList = page.find_class("list_ads__title")
+    ResultHrefList=[quote(Ad.get('href'),safe="%/:=&?~#+!$,;'@()*[]") for Ad in AdList]
+    ResultTitleList=[Ad.text_content() for Ad in AdList]
+    return [ResultHrefList,ResultTitleList]
+
+def GetAdFromHrefKufar(href,title):
+
+    text = GetPageText(quote(href, safe="%/:=&?~#+!$,;'@()*[]"))
+    releaseDate = text[text.find('releaseDate'):text.find('releaseDate') + 50]
+    releaseDate = releaseDate[releaseDate.find('=') + 2:releaseDate.find('/') - 1]
+    releaseDate = datetime.datetime.strptime(releaseDate, "%Y-%m-%d %H:%M:%S")
+    text = text[
+           text.find('function pulseTrackPhoneNumberDisplayed(event)'):text.find('function pulseTrackAdReplySubmitted')]
+    text = text[text.find('object'):text.find('});') + 1]
+
+    # Converting JS object to DICT
+    ADdict = demjson.decode("{" + text)
+
+    # restructurizing DICT to one level
+    del ADdict['origin']
+    del ADdict['name']
+    del ADdict['provider']
+    del ADdict['type']
+    del ADdict['deployStage']
+    del ADdict['deployTag']
+    ADdict['object']['inReplyTo']['cust_name'] = ADdict['object']['name']
+    ADdict['object']['inReplyTo']['phone'] = ADdict['object']['telephone']
+    ADdict = ADdict['object']['inReplyTo']
+    ADdict['Region'] = ADdict['location']['addressRegion']
+    ADdict['Subarea'] = ADdict['location']['addressSubarea']
+    ADdict['href'] = href
+    ADdict['title'] = title
+    ADdict['release_timestamp'] = releaseDate
+    del ADdict['location']
+    return ADdict
+
+
+
+
 
 def GetKufarAdList(page_text):
     #puts information from one of the kufar googs list page into DICT
     #input - text of listing page
     #outpout - list of dicts, each dict is one AD on listing page
     page=html.document_fromstring(page_text)
-    
+
     AdList=page.find_class("list_ads__title")
     x=0
     resultList=[]
@@ -87,10 +129,7 @@ def FindDead(timestamp):
     mydb = myclient["kufar"]
     mycol = mydb["data"]
     mycol_dead=mydb['data_dead']
-    { "carrier.state": { '$ne': "NY" } }
-
     newvalues = { "$set": { "dead_timestamp": timestamp } }
-    
     mycol.update_many({ "timestamp": { '$ne':timestamp } },newvalues)
     deadCount=mycol.count_documents({ "timestamp": { '$ne':timestamp } })
     mycol_dead.insert_many(mycol.find({ "timestamp": { '$ne':timestamp } }))
@@ -98,7 +137,7 @@ def FindDead(timestamp):
     mycol.delete_many({ "timestamp": { '$ne':timestamp } })
     return deadCount
             
-        
+'''        
         
 
 timestamp=datetime.datetime.now()
@@ -108,6 +147,7 @@ totalExist=0
 pageNum=0
 print("Start:  "+str(timestamp))
 DBPutLogMessage({'status':'start','timestamp':timestamp})
+
 for pageNum in range (0,1000):
     
     page=GetPageText("https://www.kufar.by/"+quote('минск_город/Телефоны')+'?cu=BYR&phce=1&o='+str(pageNum))
@@ -147,7 +187,12 @@ DBPutLogMessage({'status':'end','timestamp':timestamp,'New':totalNew,'Exist':tot
 #db.data.createIndex({"description":"text","title":"text"})
 #db.data.find({$text: {$search: "iphone"}}, {score: {$meta: "textScore"}}).sort({score:{$meta:"textScore"}})
 
-
+'''
+print('Hi')
+page = GetPageText("https://www.kufar.by/" + quote('минск_город/Телефоны') + '?cu=BYR&phce=1&o=' + str(2))
+ListOfHref=GetPageAdLinkListKufar(page)
+Ad=GetAdFromHrefKufar(ListOfHref[0][0],ListOfHref[1][0])
+pprint.pprint(Ad)
 
 
 
