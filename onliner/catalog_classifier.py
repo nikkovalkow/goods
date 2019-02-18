@@ -92,7 +92,7 @@ def countWords(str1):
 
 
 
-def ClassifyAdCat(title,catalog_name):
+def ClassifyAdCat(title,catalog_name,show_all=False):
     #classify AD based on single catalog
     Result=[]
     
@@ -141,13 +141,16 @@ def ClassifyAdCat(title,catalog_name):
                 
                 
     if len(Result)>0:
-        return Result[0]
+        if show_all==False:
+            return Result[0]
+        else:
+            return Result
     else:
         return []
 
-def ClassifyAd(iteam):
+def ClassifyAd(iteam,show_all=False):
     try:
-        return ClassifyAdCat(iteam,'catalog')
+        return ClassifyAdCat(iteam,'catalog',show_all)
     except:
         return []
         
