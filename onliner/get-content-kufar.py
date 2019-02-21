@@ -2,45 +2,111 @@
 
 from functions_kufar import *
 from catalog_classifier import *
+from random import random
+import threading
+from time import sleep
 
-def GetPageAdLinkListKufar(page_text):
 
-    page = html.document_fromstring(page_text)
-    AdList = page.find_class("list_ads__title")
-    ResultHrefList=[quote(Ad.get('href'),safe="%/:=&?~#+!$,;'@()*[]") for Ad in AdList]
-    ResultTitleList=[Ad.text_content() for Ad in AdList]
-    return [ResultHrefList,ResultTitleList]
+
+class AdScraper:
+    def __init__(self,dbname,FunctionsSetDict):
+        self.HrefsList=[]
+        self.db_name=dbname
+        self.GetAdHrefs=FunctionsSetDict['GetAdHrefsFunc']
+        self.GetAdFromHref=FunctionsSetDict['GetAdFromHrefFunc']
+        self.Classify=FunctionsSetDict['ClassificatorFunc']
+        self.timestamp=datetime.datetime.now()
+
+    def GetAdsFromPage(self,page_num,threads_quantity=1):
+        threadsList=[]
+
+        hrefs=self.GetAdHrefs(page_num)
+
+        if hrefs==[]:
+            return None
+
+        for href in hrefs:
+
+            threadsList.append(threading.Thread(target=self.GetAdFromHref,args=(href['href'])))
+
+
+        return True
+
+
+
+
+
+    def GetAllHrefs(self):
+
+        page_counter=0
+        for page in range (0,1000):
+            hrefs=self.GetAdHrefs(page_num)
+            if hrefs==[]:
+                break
+            else:
+                page_counter=page_counter+1
+                self.HrefsList.extend(hrefs)
+        return page_counter
+
+
+
+
+
+
+
+def GetAdHrefsKufar(page_num):
+
+    page_text=GetPageText("https://www.kufar.by/" + quote('минск_город/Телефоны') + '?cu=BYR&phce=1&o=' + str(page_num))
+
+    if page_text.find('Ничего не найдено, поиск расширен')==-1 :
+        page = html.document_fromstring(page_text)
+        AdList = page.find_class("list_ads__title")
+        ResultList=[]
+        for Ad in AdList:
+            try:
+                ResultList.append({'href':quote(Ad.get('href'),safe="%/:=&?~#+!$,;'@()*[]"),'title':clearString(Ad.text_content())})
+            except:
+                continue
+        return ResultList
+    else:
+        return []
+
 
 def GetAdFromHrefKufar(href,title):
 
-    text = GetPageText(quote(href, safe="%/:=&?~#+!$,;'@()*[]"))
-    releaseDate = text[text.find('releaseDate'):text.find('releaseDate') + 50]
-    releaseDate = releaseDate[releaseDate.find('=') + 2:releaseDate.find('/') - 1]
-    releaseDate = datetime.datetime.strptime(releaseDate, "%Y-%m-%d %H:%M:%S")
-    text = text[
-           text.find('function pulseTrackPhoneNumberDisplayed(event)'):text.find('function pulseTrackAdReplySubmitted')]
-    text = text[text.find('object'):text.find('});') + 1]
+    try:
 
-    # Converting JS object to DICT
-    ADdict = demjson.decode("{" + text)
+        text = GetPageText(quote(href, safe="%/:=&?~#+!$,;'@()*[]"))
+        releaseDate = text[text.find('releaseDate'):text.find('releaseDate') + 50]
+        releaseDate = releaseDate[releaseDate.find('=') + 2:releaseDate.find('/') - 1]
+        releaseDate = datetime.datetime.strptime(releaseDate, "%Y-%m-%d %H:%M:%S")
+        text = text[
+               text.find('function pulseTrackPhoneNumberDisplayed(event)'):text.find('function pulseTrackAdReplySubmitted')]
+        text = text[text.find('object'):text.find('});') + 1]
 
-    # restructurizing DICT to one level
-    del ADdict['origin']
-    del ADdict['name']
-    del ADdict['provider']
-    del ADdict['type']
-    del ADdict['deployStage']
-    del ADdict['deployTag']
-    ADdict['object']['inReplyTo']['cust_name'] = ADdict['object']['name']
-    ADdict['object']['inReplyTo']['phone'] = ADdict['object']['telephone']
-    ADdict = ADdict['object']['inReplyTo']
-    ADdict['Region'] = ADdict['location']['addressRegion']
-    ADdict['Subarea'] = ADdict['location']['addressSubarea']
-    ADdict['href'] = href
-    ADdict['title'] = title
-    ADdict['release_timestamp'] = releaseDate
-    del ADdict['location']
-    return ADdict
+        # Converting JS object to DICT
+        ADdict = demjson.decode("{" + text)
+
+        # restructurizing DICT to one level
+        del ADdict['origin']
+        del ADdict['name']
+        del ADdict['provider']
+        del ADdict['type']
+        del ADdict['deployStage']
+        del ADdict['deployTag']
+        ADdict['object']['inReplyTo']['cust_name'] = ADdict['object']['name']
+        ADdict['object']['inReplyTo']['phone'] = ADdict['object']['telephone']
+        ADdict = ADdict['object']['inReplyTo']
+        ADdict['Region'] = ADdict['location']['addressRegion']
+        ADdict['Subarea'] = ADdict['location']['addressSubarea']
+        ADdict['href'] = href
+        ADdict['title'] = title
+        ADdict['release_timestamp'] = releaseDate
+        del ADdict['location']
+        return ADdict
+    except Exception as e:
+        DBPutLogMessage("GetAdFromHrefKufar(href,title) AD add failed link:" + href + ' ' + str(e))
+        return []
 
 
 
@@ -188,11 +254,43 @@ DBPutLogMessage({'status':'end','timestamp':timestamp,'New':totalNew,'Exist':tot
 #db.data.find({$text: {$search: "iphone"}}, {score: {$meta: "textScore"}}).sort({score:{$meta:"textScore"}})
 
 '''
-print('Hi')
-page = GetPageText("https://www.kufar.by/" + quote('минск_город/Телефоны') + '?cu=BYR&phce=1&o=' + str(2))
-ListOfHref=GetPageAdLinkListKufar(page)
-Ad=GetAdFromHrefKufar(ListOfHref[0][0],ListOfHref[1][0])
-pprint.pprint(Ad)
+
+#page = GetPageText("https://www.kufar.by/" + quote('минск_город/Телефоны') + '?cu=BYR&phce=1&o=' + str(2))
+#ListOfHref=GetPageAdLinkListKufar(page)
+#Ad=GetAdFromHrefKufar(ListOfHref[0][0],ListOfHref[1][0])
+
+test=AdScraper('test',{'GetAdHrefsFunc':GetAdHrefsKufar,'GetAdFromHrefFunc':GetAdFromHrefKufar,'ClassificatorFunc':ClassifyAd})
+print(test.GetAdsFromPage(1))
+#pprint.pprint(ListOfHref)
+'''
+def test():
+    num=int(random()*10)+1
+    print('start ',num)
+    sleep(num)
+    print('end ',num)
+    return num
+
+th_list=[]
+for i in range (0,10):
+    th_list.append(threading.Thread(target=test))
+
+for i in range (0,10):
+    th_list[i].start()
+
+old_count=0
+while True:
+
+    count=threading.activeCount()
+    if count!=old_count:
+        print('Threads:',count)
+        old_count=count
+    if count==1:
+        print('Finsih all')
+        break
+
+'''
+
+
 
 
 
