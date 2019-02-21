@@ -37,28 +37,12 @@ class AdScraper:
         for thr in threadsList:
             thr.start()
             while threading.active_count() >= threads_quantity:
-                print(threading.active_count())
+                pass
+        while threading.active_count() > 1:
+            pass
 
 
         return True
-
-
-
-
-
-    def GetAllHrefs(self):
-
-        page_counter=0
-        for page in range (0,1000):
-            hrefs=self.GetAdHrefs(page_num)
-            if hrefs==[]:
-                break
-            else:
-                page_counter=page_counter+1
-                self.HrefsList.extend(hrefs)
-        return page_counter
-
-
 
 
 
@@ -271,7 +255,7 @@ DBPutLogMessage({'status':'end','timestamp':timestamp,'New':totalNew,'Exist':tot
 
 test=AdScraper('test',{'GetAdHrefsFunc':GetAdHrefsKufar,'GetAdFromHrefFunc':GetAdFromHrefKufar,'ClassificatorFunc':ClassifyAd})
 print(test.GetAdsFromPage(1,5))
-print(test.TempAdList)
+print(len(test.TempAdList))
 #pprint.pprint(ListOfHref)
 '''
 def test():
