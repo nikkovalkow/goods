@@ -10,12 +10,18 @@ from time import sleep
 
 class AdScraper:
     def __init__(self,dbname,FunctionsSetDict):
-        self.HrefsList=[]
+        self.TempAdList=[]
         self.db_name=dbname
         self.GetAdHrefs=FunctionsSetDict['GetAdHrefsFunc']
         self.GetAdFromHref=FunctionsSetDict['GetAdFromHrefFunc']
         self.Classify=FunctionsSetDict['ClassificatorFunc']
         self.timestamp=datetime.datetime.now()
+
+
+    def PutAdToTempList(self,href):
+        self.TempAdList.append(self.GetAdFromHref(href['href'],href['title']))
+
+
 
     def GetAdsFromPage(self,page_num,threads_quantity=1):
         threadsList=[]
@@ -26,8 +32,12 @@ class AdScraper:
             return None
 
         for href in hrefs:
+            threadsList.append(threading.Thread(target=self.PutAdToTempList,args=(href,)))
 
-            threadsList.append(threading.Thread(target=self.GetAdFromHref,args=(href['href'])))
+        for thr in threadsList:
+            thr.start()
+            while threading.active_count() >= threads_quantity:
+                print(threading.active_count())
 
 
         return True
@@ -260,7 +270,8 @@ DBPutLogMessage({'status':'end','timestamp':timestamp,'New':totalNew,'Exist':tot
 #Ad=GetAdFromHrefKufar(ListOfHref[0][0],ListOfHref[1][0])
 
 test=AdScraper('test',{'GetAdHrefsFunc':GetAdHrefsKufar,'GetAdFromHrefFunc':GetAdFromHrefKufar,'ClassificatorFunc':ClassifyAd})
-print(test.GetAdsFromPage(1))
+print(test.GetAdsFromPage(1,5))
+print(test.TempAdList)
 #pprint.pprint(ListOfHref)
 '''
 def test():
