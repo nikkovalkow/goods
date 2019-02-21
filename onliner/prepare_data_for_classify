@@ -1,0 +1,40 @@
+from functions_kufar import *
+from catalog_classifier import *
+from random import random
+import threading
+from time import sleep
+
+
+
+myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+mydb = myclient['test']
+mycol = mydb["sold_ct"]
+
+result=mycol.find({"correct":None})
+
+correct=mycol.count_documents({"correct":1})
+incorrect=mycol.count_documnts({"correct":0})
+print((100*correct)/(correct+incorrect))
+incorrect=0
+total=0
+for ad in result:
+    print(ad['title'])
+    print(ad['classificator'][2])
+    a=input("Correct?")
+    if a!='':
+        newvalues = {"$set": {"correct": 0}}
+        mycol.update_many({"href": ad['href']}, newvalues)
+        incorrect=incorrect+1
+    else:
+        newvalues = {"$set": {"correct": 1}}
+        mycol.update_many({"href":ad['href']}, newvalues)
+    total=total+1
+
+print('total:',total)
+print('incorrect:',incorrect)
+print('correct:',total-incorrect)
+print('success rate:',int((total-incorrect/incorrect)*100))
+
+
+
+
