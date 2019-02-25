@@ -28,6 +28,7 @@ class AdScraper:
 
 
     def PutAdToTempList(self,href):
+        print(self.GetAdFromHref(href['href'],href['title']))
         self.TempAdList.append(self.GetAdFromHref(href['href'],href['title']))
 
 
@@ -36,6 +37,7 @@ class AdScraper:
         threadsList=[]
 
         hrefs=self.GetAdHrefs(page_num)
+
 
         if hrefs==[]:
             return None
@@ -49,6 +51,7 @@ class AdScraper:
                 pass
         while threading.active_count() > 1:
             pass
+
         self.PutTempAdsToDB()
 
 
@@ -69,14 +72,14 @@ class AdScraper:
                     Ad['timestamp'] = self.timestamp
                     Ad['first_timestamp'] = self.timestamp
                     Ad['classificator'] = self.Classify(clearString(Ad['title']))
-                    DBPutObject(myclient, self.db_name, 'data', Ad)
+                    DBPutObject(self.db_name, 'data', Ad)
                     self.NewADCount = self.NewADCount + 1
                 else:
                     newvalues = {"$set": {"timestamp": self.timestamp}}  # if exists with the same URL
                     mycol.update_many({'href': Ad['href']}, newvalues)
                     Ad['timestamp'] = self.timestamp
                     Ad['first_timestamp'] = self.timestamp
-                    DBPutObject(myclient, self.db_name, 'data', Ad)
+                    DBPutObject(self.db_name, 'data', Ad)
                     self.UpdatedADCount = self.UpdatedADCount + 1
 
             else:  # if exist

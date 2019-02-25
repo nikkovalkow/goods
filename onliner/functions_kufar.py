@@ -2,6 +2,7 @@
 from basic_functions import *
 from lxml import html
 from urllib.parse import quote
+import demjson
 
 
 def GetAdHrefsKufar(page_num):
