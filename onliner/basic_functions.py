@@ -94,13 +94,13 @@ def DBPutLogMessage(message):
         print("DBPutLogMessage() DB open error  " + str(datetime.datetime.now()))
 
 
-def DBPutObject(db_name, collection_name, dict_obj):
+def DBPutObject(db_client,db_name, collection_name, dict_obj):
     try:
         mydb = db_client[db_name]
         mycol = mydb[collection_name]
         mycol.insert_one(dict_obj)
     except:
-        print("DBPutObject() DB open error " + str(datetime.datetime.now()))
+        print("DBPutObject() DB open error " + str(datetime.datetime.now())+ " db_name:"+db_name+ " col_name:"+collection_name)
 
 
 def GetPageText(url):

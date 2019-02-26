@@ -18,6 +18,7 @@ import pprint
 
 
 def ClassifyAdCat(title,catalog_name):
+    #t1 = time.perf_counter()
     #classify AD based on single catalog
     Result=[]
     
@@ -29,9 +30,10 @@ def ClassifyAdCat(title,catalog_name):
     except:
         ExceptionMessage("catalog_classifier.py - DB OPEN ERROR")
         return None
-   
- 
-    catalog=mycol_catalog.find()
+
+    mycol_catalog.create_index([("manufacture", "text"), ("model", "text")])
+    title = clearString(title)
+    catalog=mycol_catalog.find({'$text': {'$search':title }}, {'score': {'$meta': "textScore"}})
 
     
    
@@ -44,10 +46,10 @@ def ClassifyAdCat(title,catalog_name):
         
            
         mdl=clearString(manufacture['model'])      #remove extra characters from model title
-        title=clearString(title)        #remove extra characters from AD title
-        compResult=compareStrings(mdl,title,0.8) # how many words are pretty the same
-        tanimotoResult=compareWords(mdl,title)*tanimotok(mdl,title) # whats the difference between strings based on Livenstain*Tanimoto
-            
+                #remove extra characters from AD title
+        compResult=compareStrings(mdl,title,0.9) # how many words are pretty the same
+        tanimotoResult=compareWords(mdl,title)*tanimotok(mdl,title) # whats the difference between strings based on Livenstain*Tanimoto # whats the difference between strings based on Tanimoto
+
             
                         
         if len(compResult)>lastResult:  # compare how many identical words are in the model and title
@@ -62,13 +64,17 @@ def ClassifyAdCat(title,catalog_name):
                 Result.append([len(compResult),tanimotoResult,mdl,manufacture['manufacture'].strip().lower()])
             elif tanimotoResult==lastTanimoto:
                  Result.append([len(compResult),tanimotoResult,mdl,manufacture['manufacture'].strip().lower()])
-                    
-                
+
+
+
                 
     if len(Result)>0:
         return Result[0]
     else:
         return []
+
+
+
 
 def ClassifyAd(iteam):
     try:

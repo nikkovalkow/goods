@@ -17,16 +17,24 @@ words_dict={}
 result=mycol.find({"correct":None})
 
 correct=mycol.count_documents({"correct":1})
-incorrect=mycol.count_documents({"correct":0})
-print((100*correct)/(correct+incorrect))
-incorrect=0
-total=0
+
 
 
 
 cr=mycol.find({"correct":1})
 ncr=mycol.find({"correct":0})
 
+
+for adv in cr:
+    classify=ClassifyAd(adv['title'])[2]
+    if(classify!=adv['classificator'][2]):
+
+        print ('fail   - ',clearString(adv['title']),'/',classify,'/ ',adv['classificator'][2])
+
+    print('---------')
+
+
+''' WORDS HISTO
 for i in cr:
     for word in i['description'].replace('  ',' ').split(' '):
         if words_dict.get(word)==None:
@@ -38,7 +46,7 @@ for i in cr:
 df=pd.DataFrame(words_dict.items(),columns=['Word','Count'])
 df=df.sort_values(by='Count',ascending=False)
 print(df.head(50))
-
+'''
 
 
 
@@ -53,7 +61,7 @@ print(df.head(50))
 #plt.show()
 
 
-
+'''
 
 for ad in result:
     print(ad['title'])
@@ -72,7 +80,7 @@ print('total:',total)
 print('incorrect:',incorrect)
 print('correct:',total-incorrect)
 print('success rate:',int((total-incorrect/incorrect)*100))
-
+'''
 
 
 
