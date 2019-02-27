@@ -121,53 +121,64 @@ class AdScraper:
 
     def RecheckDead(self,threads_quantity=1):
 
-        self.AdReturn = 0
-        self.AdSold = 0
-        self.AdDisappeared = 0
-        threadsList=[]
-        self.TempStatusCheck=[]
-        DeadList=self.database.Collection('data_dead').find({})
+        try:
+            self.AdReturn = 0
+            self.AdSold = 0
+            self.AdDisappeared = 0
+            threadsList=[]
+            self.TempStatusCheck=[]
+            DeadList=self.database.Collection('data_dead').find({})
 
 
-        for Ad in DeadList:
-            threadsList.append(threading.Thread(target=self.GetDeadStatusList,args=(Ad['href'],)))
+            for Ad in DeadList:
+                threadsList.append(threading.Thread(target=self.GetDeadStatusList,args=(Ad['href'],)))
 
-        active_before=threading.active_count()
+            active_before=threading.active_count()
 
 
-        for thr in threadsList:
+            for thr in threadsList:
 
-            thr.start()
+                thr.start()
 
-            while threading.active_count() >= active_before+threads_quantity:
+                while threading.active_count() >= active_before+threads_quantity:
+                    pass
+
+            while threading.active_count() > active_before:
                 pass
 
-        while threading.active_count() > active_before:
-            pass
+        except Exception as e:
+            DBPutLogMessage("RecheckDead - phase1: " + str(e))
 
 
-        for ad in self.TempStatusCheck:
-            href=ad[0]
-            status=ad[1]
-            print(ad)
-            if status=='exists':
 
-                if self.database.Collection('data').count_documents({'href': href}) == 0:
-                    self.database.Collection('data').insert_many(self.database.Collection('data_dead').find({'href': href}))
-                self.database.Collection('data_dead').delete_many({'href': href})
-                print('delete ',href)
-                self.AdReturn = self.AdReturn + 1
+            for ad in self.TempStatusCheck:
+                try:
+                    href=ad[0]
+                    status=ad[1]
+                    print(ad)
+                    if status=='exists':
+
+                        if self.database.Collection('data').count_documents({'href': href}) == 0:
+                            self.database.Collection('data').insert_many(self.database.Collection('data_dead').find({'href': href}))
+                        self.database.Collection('data_dead').delete_many({'href': href})
+                        print('delete ',href)
+                        self.AdReturn = self.AdReturn + 1
 
 
-            elif status=='sold':
-                self.database.Collection('data_sold').insert_many(self.database.Collection('data_dead').find({'href': href}))
-                self.database.Collection('data_dead').delete_many({'href': href})
-                print("SOLD:", href)
-                self.AdSold = self.AdSold + 1
-            else:
-                self.AdDisappeared = self.AdDisappeared + 1
+                    elif status=='sold':
+                        self.database.Collection('data_sold').insert_many(self.database.Collection('data_dead').find({'href': href}))
+                        self.database.Collection('data_dead').delete_many({'href': href})
+                        print("SOLD:", href)
+                        self.AdSold = self.AdSold + 1
+                    else:
+                        self.AdDisappeared = self.AdDisappeared + 1
 
-        self.TempStatusCheck=[]
+                except Exception as e:
+                    DBPutLogMessage("RecheckDead - phase1: " + str(e))
+
+            self.TempStatusCheck=[]
+
+
 
 
 

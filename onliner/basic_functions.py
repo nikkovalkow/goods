@@ -143,8 +143,8 @@ def GetPageText(url):
             time.sleep(5)
             ErrorCount = ErrorCount + 1
             pass
-        except:
-            ExceptionMessage("HTTP ERROR: NO TYPE")
+        except Exception as e1:
+            ExceptionMessage("HTTP ERROR:"+e1)
             time.sleep(5)
             ErrorCount = ErrorCount + 1
             pass
