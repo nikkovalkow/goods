@@ -180,7 +180,7 @@ class AdScraper:
 
             
 
-test=AdScraper('test',"mongodb://localhost:27017/",
+test=AdScraper('kufar',"mongodb://localhost:27017/",
                {'GetAdHrefsFunc':GetAdHrefsKufar,'GetAdFromHrefFunc':GetAdFromHrefKufar,'ClassificatorFunc':ClassifyAd,'CheckAdStateFunc':CheckAdStateKufar})
 
 DBPutLogMessage("START - kufar DEAD RECHECK")
