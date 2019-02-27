@@ -106,6 +106,20 @@ def GetKufarAdList(page_text):
 
     return resultList
 
+def CheckAdStateKufar(href):
+
+    text = GetPageText(quote(href, safe="%/:=&?~#+!$,;'@()*[]"))
+    if text.find('Объявление не найдено') != -1:  # if deleted or expired
+        return [href,'sold']
+
+    else:  # if no AD page displayed
+        text = text[text.find('function pulseTrackPhoneNumberDisplayed(event)'):text.find(
+            'function pulseTrackAdReplySubmitted')]
+        if len(text) == 0:
+            return [href,'disappeared']
+
+        else:  # if AD in normal state exist
+            return [href,'exists']
 
 
     

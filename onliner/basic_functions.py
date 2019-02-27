@@ -5,6 +5,30 @@ import pymongo
 import time
 
 
+class ScraperDB:
+
+    def __init__(self,db_server, dbname):
+        try:
+
+            self.db_client = pymongo.MongoClient(db_server)
+            self.db = self.db_client[dbname]
+            self.db_server=db_server
+        except:
+
+            print("ScraperDB DB open error " + str(
+                datetime.datetime.now()) + " db_name:" + dbname + " db_server: " + db_server)
+
+    def DBPutObject(self, collection_name, dict_obj):
+        try:
+            mycol = self.db[collection_name]
+            mycol.insert_one(dict_obj)
+        except:
+            print("DBPutObject() DB open error " + str(
+                datetime.datetime.now()) + " server: " + self.db_server + " col_name:" + collection_name)
+    def Collection(self,name):
+        return self.db[name]
+
+
 
 
 # Расстояние_Левенштейна
