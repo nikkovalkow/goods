@@ -5,7 +5,7 @@ app = Flask(__name__)
 @app.route("/log")
 def hello():
 	myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-	mydb = myclient["kufar"]
+	mydb = myclient["global"]
 	mycol = mydb["log"]
 
 	
