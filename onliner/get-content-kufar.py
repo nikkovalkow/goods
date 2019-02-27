@@ -155,13 +155,13 @@ class AdScraper:
                 try:
                     href=ad[0]
                     status=ad[1]
-                    print(ad)
+
                     if status=='exists':
 
                         if self.database.Collection('data').count_documents({'href': href}) == 0:
                             self.database.Collection('data').insert_many(self.database.Collection('data_dead').find({'href': href}))
                         self.database.Collection('data_dead').delete_many({'href': href})
-                        print('delete ',href)
+                        print('EXIST ',href)
                         self.AdReturn = self.AdReturn + 1
 
 
