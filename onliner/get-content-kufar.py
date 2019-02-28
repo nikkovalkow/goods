@@ -114,19 +114,15 @@ class AdScraper:
         if hrefs==[]:
             return None
 
+        active_before = threading.active_count()
         for href in hrefs:
-            threadsList.append(threading.Thread(target=self.GetAd,args=(href,)))
-
-        active_before=threading.active_count()
-        for thr in threadsList:
+            thr=threading.Thread(target=self.GetAd,args=(href,))
             thr.start()
-
+            threadsList.append(thr)
             while threading.active_count() >= threads_quantity + active_before:
                 pass
-
         while threading.active_count() > active_before:
             pass
-
 
         return True
 
@@ -151,16 +147,12 @@ class AdScraper:
 
             DeadList=self.database.Collection('data_dead').find({})
 
+            active_before = threading.active_count()
 
             for Ad in DeadList:
-                threadsList.append(threading.Thread(target=self.RecheckAd,args=(Ad['href'],)))
-
-            active_before=threading.active_count()
-
-
-            for thr in threadsList:
-
+                thr=threading.Thread(target=self.RecheckAd,args=(Ad['href'],))
                 thr.start()
+                threadsList.append(thr)
 
                 while threading.active_count() >= active_before+threads_quantity:
                     pass
