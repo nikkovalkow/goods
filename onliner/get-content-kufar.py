@@ -200,7 +200,7 @@ for i in range(0,1000):
 
 test.FindDead()
 DBPutLogMessage("FINISH - kufar FULL SCAN: New = " +
-                str(test.NewADCount)+ ' Exist = ' + str(test.ExistADCount)+ ' Exist = ' + str(test.DeadCount)+" total pages = "+str(x))
+                str(test.NewADCount)+ ' Exist = ' + str(test.ExistADCount)+ ' Dead = ' + str(test.DeadCount)+" total pages = "+str(x))
 
 
 
