@@ -17,7 +17,7 @@ for o in result:
     days=(o['dead_timestamp']-o['release_timestamp']).days
 
     if (o.get('classificator')==None) or o.get('classificator')==[]:
-        classify=ClassifyAd(o['title'])
+        classify=ClassifyAd(o)
         newvalues = { "$set": { "classificator": classify } } 
         mycol.update_many({'href':o['href']},newvalues)
     else:

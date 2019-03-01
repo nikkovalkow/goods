@@ -25,7 +25,7 @@ def textMessage(bot, update):
     print(update.message.text)
     bot.send_message(chat_id=update.message.chat_id, text='хм.. сейчас подумаю..')
 
-    model=ClassifyAd(update.message.text)[2]
+    model=ClassifyAd({'title':update.message.text})[2]
     print(model)
     price=getMeanAndStdPrice(model)
     if price!=[]:

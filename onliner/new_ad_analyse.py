@@ -67,7 +67,7 @@ def AnalyseNewList(new_list,timestamp):
     for Ad in new_list:
         DBPutObject(myclient,'kufar','data_operational',Ad)
 
-        model=ClassifyAd(clearString(Ad['title']))[2]
+        model=ClassifyAd(Ad)[2]
         
         
         

@@ -13,7 +13,7 @@ print ('To clasify:',mycol.count_documents({"classificator":None}))
 for o in result:
     
     
-    classify=ClassifyAd(o['title'])    
+    classify=ClassifyAd(o)
        
     newvalues = { "$set": { "classificator": classify } } 
     mycol.update_many({'href':o['href']},newvalues)

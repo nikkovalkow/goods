@@ -26,7 +26,7 @@ ncr=mycol.find({"correct":0})
 
 
 for adv in cr:
-    classify=ClassifyAd(adv['title'])[2]
+    classify=ClassifyAd(adv)[2]
     if(classify!=adv['classificator'][2]):
 
         print ('fail   - ',clearString(adv['title']),'/',classify,'/ ',adv['classificator'][2])

@@ -47,7 +47,7 @@ class AdScraper:
                     if self.database.Collection('data').count_documents({'href': Ad['href']}) == 0:  # if not exists with the same URL
                         Ad['timestamp'] = self.timestamp
                         Ad['first_timestamp'] = self.timestamp
-                        Ad['classificator'] = self.Classify(clearString(Ad['title']))
+                        Ad['classificator'] = self.Classify(Ad)
                         self.database.DBPutObject('data', Ad)
                         #DBPutObject(myclient,self.db_name, 'data', Ad)
                         self.NewADCount = self.NewADCount + 1
@@ -91,6 +91,12 @@ class AdScraper:
                 self.database.Collection('data_dead').find({'href': href}))
             self.database.Collection('data_dead').delete_many({'href': href})
             print("SOLD:", href)
+
+
+
+
+
+
             self.AdSold = self.AdSold + 1
         else:
             self.AdDisappeared = self.AdDisappeared + 1

@@ -17,9 +17,10 @@ import pprint
 
 
 
-def ClassifyAdCat(title,catalog_name):
+def ClassifyAdCat(iteam,catalog_name):
     #t1 = time.perf_counter()
     #classify AD based on single catalog
+    title=iteam['title']
     Result=[]
     
 
