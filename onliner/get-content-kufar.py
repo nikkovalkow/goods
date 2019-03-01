@@ -87,9 +87,21 @@ class AdScraper:
 
 
         elif status == 'sold':
+            result=self.database.Collection('data_dead').find({'href': href})
+
+            for ad in result:
+                days = (ad['dead_timestamp'] - ad['release_timestamp']).days
+                newvalues = {"$set": {"days_for_sale": days}}
+                self.database.Collection('data_dead').update_many({'href': href}, newvalues)
+                break
+
+
             self.database.Collection('data_sold').insert_many(
                 self.database.Collection('data_dead').find({'href': href}))
             self.database.Collection('data_dead').delete_many({'href': href})
+
+
+
             print("SOLD:", href)
 
 
