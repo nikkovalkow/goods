@@ -12,6 +12,25 @@ import pprint
     
 
 
+def ClassifyRequest(title):
+    try:
+        myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+        mydb = myclient["kufar"]
+        mycol_catalog = mydb['catalog']
+    except:
+        ExceptionMessage("catalog_classifier.py - DB OPEN ERROR")
+        return None
+
+    for m in mycol_catalog.find({}):
+
+        newvalues = {"$set": {"model": clearString(m['model'])}}
+        mycol_catalog.update_one(m, newvalues)
+
+    mycol_catalog.create_index([("manufacture", "text"), ("model", "text")])
+    title = clearString(title)
+    catalog=mycol_catalog.find({'$text': {'$search':title }}, {'score': {'$meta': "textScore"}})
+
+    return catalog
 
 
 
@@ -31,6 +50,7 @@ def ClassifyAdCat(iteam,catalog_name):
     except:
         ExceptionMessage("catalog_classifier.py - DB OPEN ERROR")
         return None
+
 
     mycol_catalog.create_index([("manufacture", "text"), ("model", "text")])
     title = clearString(title)
@@ -96,6 +116,11 @@ def ClearCatalog():
     mycol_catalog = mydb['catalog']
     mycol_catalog.delete_many({'manufacture':'2017'})
     mycol_catalog.delete_many({'manufacture':'2018'})
+
+
+
+for ad in ClassifyRequest('iphone 4s'):
+    print(ad['model'])
 
 
     

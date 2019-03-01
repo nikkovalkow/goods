@@ -31,10 +31,7 @@ class AdScraper:
         self.timestamp=datetime.datetime.now()
 
 
-    def PutAdToTempList(self,href):
-        Data=self.GetAdFromHref(href['href'],href['title'])
-        if Data!=[]:
-            self.TempAdList.append(Data)
+
 
     def GetAd(self,href):
 
@@ -156,7 +153,9 @@ class AdScraper:
 
 
     def RecheckDead(self,threads_quantity=1):
-
+        #recheck all hrefs in data_dead DB for AD existance
+        #threads_quantity - how many threads to run in the same time
+        #uses RecheckAd function in Thread call
         try:
             self.AdReturn = 0
             self.AdSold = 0
